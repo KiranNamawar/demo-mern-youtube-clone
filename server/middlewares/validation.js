@@ -1,4 +1,4 @@
-import { fail } from "../utils/response";
+import { fail } from "../utils/response.js";
 
 export function validateBody(schema) {
   return (req, res, next) => {
