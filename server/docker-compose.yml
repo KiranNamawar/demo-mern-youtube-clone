@@ -1,0 +1,11 @@
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: youtube-clone-db
+    ports:
+      - "27017:27017"
+    volumes:
+      - youtube-clone-data:/data/db
+
+volumes:
+  youtube-clone-data:
