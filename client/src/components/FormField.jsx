@@ -7,14 +7,14 @@ function FormField({ name, type, value, onChange, errors }) {
   return (
     <div key={name}>
       <label htmlFor={name}>{name}</label>
-      <div>
+      <div className="flex items-center w-full">
         <input
           id={name}
           name={name}
           type={inputType}
           value={value}
           onChange={(evt) => onChange(name, evt.target.value)}
-          className="border"
+          className="border w-full"
         />
         {type === "password" && (
           <button type="button" onClick={() => setShowPassword((v) => !v)}>
