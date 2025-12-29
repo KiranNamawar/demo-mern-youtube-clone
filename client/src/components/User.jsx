@@ -1,10 +1,10 @@
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router";
 import { useEffect } from "react";
+import { Plus, User2 } from "lucide-react";
 import api from "../lib/api";
 import { loginSuccess } from "../state/userSlice";
-import { PlusIcon, User2Icon } from "lucide-react";
-import Icon from "./Icon";
+import Avatar from "./Avatar";
 
 function User() {
   const dispatch = useDispatch();
@@ -16,7 +16,7 @@ function User() {
     const accessToken = localStorage.getItem("accessToken");
     if (accessToken && !isAuthenticated) {
       api
-        .get("/api/me")
+        .get("/me")
         .then((res) => {
           dispatch(loginSuccess({ ...res.data.data, accessToken }));
         })
@@ -29,16 +29,12 @@ function User() {
       {isAuthenticated ? (
         <>
           <button className="flex items-center">
-            <PlusIcon />
+            <Plus />
             <span>Create</span>
           </button>
           <span className="flex items-center">
-            <Icon
-              src={user.avatar}
-              alt={user.username}
-              FallbackIcon={User2Icon}
-            />
-            <span>{user.username}</span>
+            <Avatar src={user.avatar} alt={user.username} />
+            {/* <span>{user.username}</span> */}
           </span>
         </>
       ) : (
