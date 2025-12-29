@@ -6,6 +6,8 @@ import { getEnvVar } from "./utils/env.js";
 import authRouter from "./routes/auth.js";
 import { fail } from "./utils/response.js";
 import ErrorCodes from "./lib/error-codes.js";
+import { authenticateUser } from "./middlewares/auth.js";
+import apiRouter from "./routes/api.js";
 
 // connect to database
 const DB_URL = getEnvVar("DB_URL");
@@ -32,6 +34,9 @@ app.get("/", (_, res) => {
 
 // auth routes
 app.use("/auth", authRouter);
+
+// protected routes
+app.use("/api", authenticateUser, apiRouter);
 
 // global error handler
 app.use((err, req, res, next) => {
