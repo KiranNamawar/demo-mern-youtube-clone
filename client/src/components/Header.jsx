@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import ThemeToggle from "./ThemeToggle";
 import { Link } from "react-router";
 import User from "./User";
+import SearchBar from "./SearchBar";
 
 function Header() {
   const theme = useSelector((state) => state.theme);
@@ -19,7 +20,7 @@ function Header() {
           <img src={logo} alt="YouTube Logo" width={100} />
         </Link>
       </div>
-      <search></search>
+      <SearchBar />
       <div className="flex items-center">
         <ThemeToggle />
         <User />
