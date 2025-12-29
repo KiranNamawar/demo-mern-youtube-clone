@@ -8,7 +8,8 @@
     "start": "node index.js",
     "dev": "nodemon index.js",
     "db:start": "docker compose up --detach",
-    "db:stop": "docker compose stop"
+    "db:stop": "docker compose stop",
+    "db:seed": "node seed.js"
   },
   "devDependencies": {
     "nodemon": "^3.1.11"
