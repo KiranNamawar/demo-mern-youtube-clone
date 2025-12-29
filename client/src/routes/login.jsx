@@ -43,6 +43,7 @@ function Login() {
         submitPath="/auth/login"
         onSuccess={handleSuccess}
         onError={handleError}
+        submitButtonTitle="Login"
       />
       {error && <div>{error}</div>}
       <div>

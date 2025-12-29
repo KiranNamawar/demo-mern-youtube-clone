@@ -4,7 +4,14 @@ import api from "../lib/api";
 import FormField from "./FormField";
 import ErrorCodes from "../lib/error-codes";
 
-function Form({ fields, schema, submitPath, onSuccess, onError }) {
+function Form({
+  fields,
+  schema,
+  submitPath,
+  onSuccess,
+  onError,
+  submitButtonTitle,
+}) {
   const defaultFormValues = useMemo(
     () => Object.fromEntries(fields.map((f) => [f.name, f.defaultValue])),
     [fields]
@@ -69,7 +76,7 @@ function Form({ fields, schema, submitPath, onSuccess, onError }) {
           errors={formErrors[name]?.errors}
         />
       ))}
-      <button type="submit">Register</button>
+      <button type="submit">{submitButtonTitle}</button>
     </form>
   );
 }

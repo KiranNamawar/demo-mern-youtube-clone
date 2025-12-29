@@ -64,6 +64,7 @@ function Register() {
         submitPath="/auth/register"
         onSuccess={handleSuccess}
         onError={handleError}
+        submitButtonTitle="Register"
       />
       {error && <div>{error}</div>}
       <div>
