@@ -1,5 +1,5 @@
-import User from "../../models/User.js";
-import { ok } from "../../utils/response.js";
+import { User } from "../models/index.js";
+import { ok } from "../utils/response.js";
 
 export async function meHandler(req, res, next) {
   const userId = req.user.id;

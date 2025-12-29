@@ -7,7 +7,11 @@ import authRouter from "./routes/auth.js";
 import { fail } from "./utils/response.js";
 import ErrorCodes from "./lib/error-codes.js";
 import { authenticateUser } from "./middlewares/auth.js";
-import apiRouter from "./routes/api.js";
+import { meHandler } from "./routes/me.js";
+import videosRouter from "./routes/videos.js";
+
+// register all schemas
+import "./models/index.js";
 
 // connect to database
 const DB_URL = getEnvVar("DB_URL");
@@ -35,8 +39,11 @@ app.get("/", (_, res) => {
 // auth routes
 app.use("/auth", authRouter);
 
-// protected routes
-app.use("/api", authenticateUser, apiRouter);
+// videos routes
+app.use("/videos", videosRouter);
+
+// get authenticated user data
+app.get("/me", authenticateUser, meHandler);
 
 // global error handler
 app.use((err, req, res, next) => {

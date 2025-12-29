@@ -28,18 +28,3 @@ export function validateBody(schema) {
   };
 }
 
-export function validateQuery(schema) {
-  return (req, res, next) => {
-    // parse request query
-    const result = schema.safeParse(req.query);
-    if (!result.success) {
-      const errors = z.treeifyError(result.error).properties;
-      return fail(res, ErrorCodes.VALIDATION_ERROR, errors, 400);
-    }
-
-    // attach parsed data
-    req.validatedQuery = result.data;
-
-    next();
-  };
-}

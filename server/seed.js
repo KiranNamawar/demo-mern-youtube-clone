@@ -1,9 +1,6 @@
 import fs from "node:fs";
 import mongoose from "mongoose";
-import Channel from "./models/Channel.js";
-import Comment from "./models/Comment.js";
-import User from "./models/User.js";
-import Video from "./models/Video.js";
+import { User, Channel, Video, Comment } from "./models/index.js";
 import { getEnvVar } from "./utils/env.js";
 import { hashPassword } from "./utils/password.js";
 
@@ -113,7 +110,7 @@ async function seed() {
             videoId: newVideo._id,
             userId: commenterId,
             content: comm.text,
-            createdAt: commentCreatedAt,    
+            createdAt: commentCreatedAt,
             updatedAt: commentCreatedAt,
           });
         }
