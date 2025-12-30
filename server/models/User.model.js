@@ -8,7 +8,7 @@ const userSchema = new Schema(
     avatar: String,
     channels: [{ type: Schema.Types.ObjectId, ref: "Channel" }],
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
 export default model("User", userSchema);

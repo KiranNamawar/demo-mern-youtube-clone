@@ -1,6 +1,7 @@
 import z from "zod";
 import { fail } from "../utils/response.js";
 import ErrorCodes from "../lib/error-codes.js";
+import { Types } from "mongoose";
 
 export function validateBody(schema) {
   return (req, res, next) => {
@@ -28,3 +29,13 @@ export function validateBody(schema) {
   };
 }
 
+export function validateObjectId(paramsIdName = "id") {
+  return (req, res, next) => {
+    const id = req.params[paramsIdName];
+    if (!Types.ObjectId.isValid(id)) {
+      return fail(res, ErrorCodes.INVALID_OBJECTID, "Invalid ObjectId", 400);
+    }
+    req.validatedId = id;
+    next();
+  };
+}
