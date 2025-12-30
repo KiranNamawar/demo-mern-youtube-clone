@@ -1,5 +1,5 @@
 import { Search } from "lucide-react";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import api from "../lib/api";
 import { setVideos } from "../state/videosSlice";
@@ -7,6 +7,31 @@ import { setVideos } from "../state/videosSlice";
 function SearchBar() {
   const [query, setQuery] = useState("");
   const dispatch = useDispatch();
+
+  const fetchVideos = useCallback(
+    (searchTerm) => {
+      const trimmed = searchTerm.trim();
+      const url =
+        trimmed && trimmed.length >= 3
+          ? `/videos?search=${encodeURIComponent(searchTerm)}`
+          : "/videos";
+
+      api
+        .get(url)
+        .then((res) => dispatch(setVideos(res.data.data)))
+        .catch(console.error);
+    },
+    [dispatch]
+  );
+
+  useEffect(() => {
+    const timerId = setTimeout(() => {
+      fetchVideos(query);
+    }, 300);
+
+    return () => clearTimeout(timerId);
+  }, [query, fetchVideos]);
+
   return (
     <search className="border flex items-center p-2">
       <input
@@ -16,16 +41,6 @@ function SearchBar() {
         value={query}
         onChange={(evt) => setQuery(evt.target.value)}
       />
-      <button
-        onClick={() => {
-          api
-            .get(`/videos?search=${query}`)
-            .then((res) => dispatch(setVideos(res.data.data)))
-            .catch(console.error);
-        }}
-      >
-        <Search />
-      </button>
     </search>
   );
 }
