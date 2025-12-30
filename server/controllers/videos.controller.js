@@ -59,6 +59,10 @@ export async function getVideoById(req, res, next) {
 
     // Calculate count and remove the array of IDs
     video.channelId.subscribersCount = video.channelId.subscribers?.length || 0;
+    video.channelId.subscribed = req.user
+      ? video.channelId.subscribers.includes(req.user.id)
+      : false;
+
     delete video.channelId.subscribers;
 
     const comments = await Comment.find({ videoId })
@@ -66,19 +70,39 @@ export async function getVideoById(req, res, next) {
       .sort({ createdAt: -1 })
       .lean();
 
-    ok(res, "Video fetched successfully", { ...video, comments }, 200);
+    const relatedVideos = await Video.find(
+      { category: video.category },
+      {
+        title: true,
+        thumbnailUrl: true,
+        views: true,
+        channelId: true,
+        createdAt: true,
+      }
+    )
+      .populate("channelId", "name avatar")
+      .sort({ createdAt: -1 })
+      .lean();
+
+    ok(
+      res,
+      "Video fetched successfully",
+      { ...video, comments, relatedVideos },
+      200
+    );
   } catch (err) {
     next(err);
   }
 }
 
-function incrementVideoFieldCount(field) {
+function updateVideoFieldCount(field) {
   return async (req, res, next) => {
+    const updateBy = req.query.dec === "true" ? -1 : 1;
     try {
       const { videoId } = req.params;
-      const video = await Video.findByIdAndUpdate(
-        videoId,
-        { $inc: { [field]: 1 } },
+      const video = await Video.findOneAndUpdate(
+        { _id: videoId, [field]: { $gte: updateBy === -1 ? 1 : 0 } },
+        { $inc: { [field]: updateBy } },
         { new: true }
       )
         .select(field)
@@ -95,7 +119,9 @@ function incrementVideoFieldCount(field) {
 
       ok(
         res,
-        `Video ${field} Incremented Successfully`,
+        `Video ${field} ${
+          updateBy === 1 ? "Incremented" : "Decremented"
+        } Successfully`,
         {
           [field]: video[field],
           videoId: video._id,
@@ -108,6 +134,5 @@ function incrementVideoFieldCount(field) {
   };
 }
 
-export const incrementVideoViews = incrementVideoFieldCount("views");
-export const incrementVideoLikes = incrementVideoFieldCount("likes");
-export const incrementVideoDislikes = incrementVideoFieldCount("dislikes");
+export const incrementVideoViews = updateVideoFieldCount("views");
+export const updateVideoLikes = updateVideoFieldCount("likes");

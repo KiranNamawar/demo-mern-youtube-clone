@@ -7,12 +7,11 @@ const videoSchema = new Schema(
     description: String,
     videoUrl: String,
     thumbnailUrl: String,
-    views: Number,
-    likes: Number,
-    dislikes: Number,
+    views: { type: Number, min: 0 },
+    likes: { type: Number, min: 0 },
     category: String,
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
 videoSchema.index({ channelId: 1, createdAt: -1 }); // Channel Videos (newest first)

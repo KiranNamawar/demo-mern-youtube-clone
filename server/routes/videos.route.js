@@ -4,8 +4,7 @@ import {
   getVideos,
   getVideoById,
   incrementVideoViews,
-  incrementVideoLikes,
-  incrementVideoDislikes,
+  updateVideoLikes,
 } from "../controllers/videos.controller.js";
 import { validateObjectId } from "../middlewares/validation.js";
 import { authenticateUser } from "../middlewares/auth.js";
@@ -27,13 +26,7 @@ router.patch(
   "/:videoId/likes",
   authenticateUser,
   validateObjectId("videoId"),
-  incrementVideoLikes
-);
-router.patch(
-  "/:videoId/dislikes",
-  authenticateUser,
-  validateObjectId("videoId"),
-  incrementVideoDislikes
+  updateVideoLikes
 );
 
 export default router;
