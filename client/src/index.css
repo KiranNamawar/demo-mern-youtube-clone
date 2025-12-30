@@ -1,5 +1,17 @@
 @import "tailwindcss";
 
+:root {
+  color-scheme: light dark;
+
+  /* YouTube Brand Colors */
+  --almost-black: #212121;
+  --almost-white: #ffffff;
+  --youtube-red: #ff0033;
+
+  --fg-color: light-dark(var(--almost-black), var(--almost-white));
+  --bg-color: light-dark(var(--almost-white), var(--almost-black));
+}
+
 :root[data-theme="light"] {
   color-scheme: light;
 }
@@ -9,4 +21,6 @@
 
 body {
   font-family: "Google Sans", sans-serif;
+  color: var(--fg-color);
+  background-color: var(--bg-color);
 }

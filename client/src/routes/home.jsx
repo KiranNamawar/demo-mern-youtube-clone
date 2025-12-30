@@ -1,12 +1,24 @@
 import { useEffect, useState } from "react";
+import { useLoaderData } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import api from "../lib/api";
 import VideoCard from "../components/VideoCard";
 import { setVideos } from "../state/videosSlice";
 
+export async function homeLoader() {
+  let categories = [];
+  try {
+    const res = await api.get("/videos/categories");
+    categories = res.data.data;
+  } catch (err) {
+    console.error(err);
+  }
+  return { categories };
+}
+
 function Home() {
   const videos = useSelector((state) => state.videos);
-  const [categories, setCategories] = useState([]);
+  const { categories } = useLoaderData();
   const [activeCategory, setActiveCategory] = useState("All");
 
   const dispatch = useDispatch();
@@ -22,13 +34,6 @@ function Home() {
       .catch(console.error);
   }, [activeCategory]);
 
-  useEffect(() => {
-    api
-      .get("/videos/categories")
-      .then((res) => setCategories(res.data.data))
-      .catch(console.error);
-  }, []);
-
   return (
     <div>
       <div className="flex gap-3">
@@ -36,6 +41,7 @@ function Home() {
           <button
             className="border"
             onClick={() => setActiveCategory(category)}
+            key={category}
           >
             {category}
           </button>

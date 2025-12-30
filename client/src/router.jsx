@@ -1,38 +1,36 @@
+import { lazy } from "react";
 import { createBrowserRouter } from "react-router";
 import App from "./App";
-import { lazy, Suspense } from "react";
+import { homeLoader } from "./routes/home.jsx";
+import { watchLoader } from "./routes/watch.jsx";
 
 const Home = lazy(() => import("./routes/home.jsx"));
 const Register = lazy(() => import("./routes/register.jsx"));
 const Login = lazy(() => import("./routes/login.jsx"));
+const Watch = lazy(() => import("./routes/watch.jsx"));
 
+// Suspence added in App.jsx for all routes
 const router = createBrowserRouter([
   {
     element: <App />,
     children: [
       {
         path: "/",
-        element: (
-          <Suspense>
-            <Home />
-          </Suspense>
-        ),
+        loader: homeLoader,
+        Component: Home,
       },
       {
         path: "/register",
-        element: (
-          <Suspense>
-            <Register />
-          </Suspense>
-        ),
+        Component: Register,
       },
       {
         path: "/login",
-        element: (
-          <Suspense>
-            <Login />
-          </Suspense>
-        ),
+        Component: Login,
+      },
+      {
+        path: "/watch/:videoId",
+        loader: watchLoader,
+        Component: Watch,
       },
     ],
   },
