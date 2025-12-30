@@ -3,12 +3,9 @@ import morgan from "morgan";
 import cors from "cors";
 import { connect } from "mongoose";
 import { getEnvVar } from "./utils/env.js";
-import authRouter from "./routes/auth.js";
 import { fail } from "./utils/response.js";
+import { authRouter, meRouter, videosRouter } from "./routes/index.js";
 import ErrorCodes from "./lib/error-codes.js";
-import { authenticateUser } from "./middlewares/auth.js";
-import { meHandler } from "./routes/me.js";
-import videosRouter from "./routes/videos.js";
 
 // register all schemas
 import "./models/index.js";
@@ -42,8 +39,8 @@ app.use("/auth", authRouter);
 // videos routes
 app.use("/videos", videosRouter);
 
-// get authenticated user data
-app.get("/me", authenticateUser, meHandler);
+// me routes
+app.use("/me", meRouter);
 
 // global error handler
 app.use((err, req, res, next) => {
