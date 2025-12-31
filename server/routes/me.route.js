@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { User } from "../models/index.js";
+import { Channel, User } from "../models/index.js";
 import { ok } from "../utils/response.js";
 import { authenticateUser } from "../middlewares/auth.js";
 
@@ -7,6 +7,10 @@ export async function getMyData(req, res, next) {
   const userId = req.user.id;
   try {
     const user = await User.findById(userId).lean();
+    const subscriptions = await Channel.find({ subscribers: userId })
+      .select("name avatar")
+      .lean();
+
     ok(
       res,
       "User data fetched Successfully",
@@ -16,6 +20,7 @@ export async function getMyData(req, res, next) {
         avatar: user.avatar,
         username: user.username,
         channels: user.channels,
+        subscriptions,
       },
       200
     );

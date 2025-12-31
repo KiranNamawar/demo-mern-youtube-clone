@@ -3,6 +3,7 @@ import { Schema, model } from "mongoose";
 const channelSchema = new Schema(
   {
     userId: { type: Schema.Types.ObjectId, ref: "User" },
+    handle: { type: String, unique: true },
     name: String,
     description: String,
     banner: String,
@@ -10,7 +11,7 @@ const channelSchema = new Schema(
     subscribers: [{ type: Schema.Types.ObjectId, ref: "User" }],
     videos: [{ type: Schema.Types.ObjectId, ref: "Video" }],
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
 channelSchema.index({ userId: 1 }); // User's channels

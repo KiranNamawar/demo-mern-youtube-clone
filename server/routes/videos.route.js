@@ -16,9 +16,7 @@ import { validateBody, validateObjectId } from "../middlewares/validation.js";
 import { authenticateUser } from "../middlewares/auth.js";
 
 const commentSchema = z.object({
-  content: z
-    .string({ error: "content is required" })
-    .max(500, { error: "Comment cannot exceed 500 characters" }),
+  content: z.string({ error: "content is required" }),
 });
 
 const validateVideoId = validateObjectId("videoId");
