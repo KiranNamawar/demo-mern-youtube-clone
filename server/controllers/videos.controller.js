@@ -1,6 +1,7 @@
+import ErrorCodes from "../lib/error-codes.js";
+import { validateDocumentId } from "../middlewares/validation.js";
 import { Comment, Video } from "../models/index.js";
 import { fail, ok } from "../utils/response.js";
-import ErrorCodes from "../lib/error-codes.js";
 
 export async function getCategories(req, res, next) {
   try {
@@ -136,3 +137,5 @@ function updateVideoFieldCount(field) {
 
 export const incrementVideoViews = updateVideoFieldCount("views");
 export const updateVideoLikes = updateVideoFieldCount("likes");
+
+export const validateVideoId = validateDocumentId(Video, "videoId");

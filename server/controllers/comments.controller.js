@@ -1,4 +1,5 @@
 import ErrorCodes from "../lib/error-codes.js";
+import { validateDocumentId } from "../middlewares/validation.js";
 import { Comment } from "../models/index.js";
 import { fail, ok } from "../utils/response.js";
 
@@ -39,9 +40,9 @@ export async function updateComment(req, res, next) {
     if (result.matchedCount === 0) {
       return fail(
         res,
-        ErrorCodes.NOT_FOUND,
-        "No comment found for specified parameters",
-        404
+        ErrorCodes.UNAUTHORIZED,
+        "Users can only update comments they authored",
+        401
       );
     }
 
@@ -63,9 +64,9 @@ export async function deleteComment(req, res, next) {
     if (result.deletedCount === 0) {
       return fail(
         res,
-        ErrorCodes.NOT_FOUND,
-        "No comment found for specified parameters",
-        404
+        ErrorCodes.UNAUTHORIZED,
+        "Users can only delete comments they authored",
+        401
       );
     }
 
@@ -76,3 +77,5 @@ export async function deleteComment(req, res, next) {
     next(err);
   }
 }
+
+export const validateCommentId = validateDocumentId(Comment, "commentId");

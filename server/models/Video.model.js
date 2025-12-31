@@ -2,14 +2,14 @@ import { Schema, model } from "mongoose";
 
 const videoSchema = new Schema(
   {
-    channelId: { type: Schema.Types.ObjectId, ref: "Channel" },
-    title: String,
+    channelId: { type: Schema.Types.ObjectId, ref: "Channel", required: true },
+    title: { type: String, required: true },
     description: String,
-    videoUrl: String,
-    thumbnailUrl: String,
+    videoUrl: { type: String, required: true },
+    thumbnailUrl: { type: String, required: true },
     views: { type: Number, min: 0 },
     likes: { type: Number, min: 0 },
-    category: String,
+    category: { type: String, required: true },
   },
   { timestamps: true }
 );

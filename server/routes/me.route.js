@@ -1,7 +1,7 @@
 import { Router } from "express";
+import { authenticateUser } from "../middlewares/auth.js";
 import { Channel, User } from "../models/index.js";
 import { ok } from "../utils/response.js";
-import { authenticateUser } from "../middlewares/auth.js";
 
 export async function getMyData(req, res, next) {
   const userId = req.user.id;

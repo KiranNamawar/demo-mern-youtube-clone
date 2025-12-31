@@ -1,26 +1,25 @@
 import { Router } from "express";
 import z from "zod";
 import {
+  createComment,
+  deleteComment,
+  updateComment,
+  validateCommentId,
+} from "../controllers/comments.controller.js";
+import {
   getCategories,
-  getVideos,
   getVideoById,
+  getVideos,
   incrementVideoViews,
   updateVideoLikes,
+  validateVideoId,
 } from "../controllers/videos.controller.js";
-import {
-  createComment,
-  updateComment,
-  deleteComment,
-} from "../controllers/comments.controller.js";
-import { validateBody, validateObjectId } from "../middlewares/validation.js";
 import { authenticateUser } from "../middlewares/auth.js";
+import { validateBody } from "../middlewares/validation.js";
 
 const commentSchema = z.object({
   content: z.string({ error: "content is required" }),
 });
-
-const validateVideoId = validateObjectId("videoId");
-const validateCommentId = validateObjectId("commentId");
 
 const router = Router();
 
