@@ -2,9 +2,9 @@ import { Schema, model } from "mongoose";
 
 const channelSchema = new Schema(
   {
-    userId: { type: Schema.Types.ObjectId, ref: "User" },
-    handle: { type: String, unique: true },
-    name: String,
+    userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    handle: { type: String, unique: true, required: true },
+    name: { type: String, required: true },
     description: String,
     banner: String,
     avatar: String,

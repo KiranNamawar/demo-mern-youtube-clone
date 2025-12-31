@@ -1,11 +1,16 @@
-import express from "express";
-import morgan from "morgan";
 import cors from "cors";
+import express from "express";
 import { connect } from "mongoose";
+import morgan from "morgan";
+import ErrorCodes from "./lib/error-codes.js";
+import {
+  authRouter,
+  channelRouter,
+  meRouter,
+  videosRouter,
+} from "./routes/index.js";
 import { getEnvVar } from "./utils/env.js";
 import { fail } from "./utils/response.js";
-import { authRouter, meRouter, videosRouter } from "./routes/index.js";
-import ErrorCodes from "./lib/error-codes.js";
 
 // register all schemas
 import "./models/index.js";
@@ -38,6 +43,9 @@ app.use("/auth", authRouter);
 
 // videos routes
 app.use("/videos", videosRouter);
+
+// channel routes
+app.use("/channel", channelRouter);
 
 // me routes
 app.use("/me", meRouter);
