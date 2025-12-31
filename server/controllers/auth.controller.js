@@ -96,3 +96,16 @@ export async function handleLogin(req, res, next) {
     next(err);
   }
 }
+
+export async function isUsernameAvailable(req, res, next) {
+  try {
+    const { username } = req.body;
+    const exists = await User.exists({ username });
+    if (exists) {
+      return fail(res, ErrorCodes.CONFLICT, `${username} already exists`, 409);
+    }
+    ok(res, `${username} is available`, null, 200);
+  } catch (err) {
+    next(err);
+  }
+}

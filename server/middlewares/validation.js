@@ -1,7 +1,7 @@
-import z from "zod";
-import { fail } from "../utils/response.js";
-import ErrorCodes from "../lib/error-codes.js";
 import { Types } from "mongoose";
+import z from "zod";
+import ErrorCodes from "../lib/error-codes.js";
+import { fail } from "../utils/response.js";
 
 export function validateBody(schema) {
   return (req, res, next) => {
@@ -29,13 +29,32 @@ export function validateBody(schema) {
   };
 }
 
-export function validateObjectId(paramsIdName = "id") {
-  return (req, res, next) => {
-    const id = req.params[paramsIdName];
-    if (!Types.ObjectId.isValid(id)) {
-      return fail(res, ErrorCodes.INVALID_OBJECTID, "Invalid ObjectId", 400);
+export function validateDocumentId(Model, paramsIdName = "id") {
+  return async (req, res, next) => {
+    try {
+      const id = req.params[paramsIdName];
+
+      // validate ObjectId
+      if (!Types.ObjectId.isValid(id)) {
+        return fail(res, ErrorCodes.INVALID_OBJECTID, "Invalid ObjectId", 400);
+      }
+
+      // validate documentId
+      const exists = await Model.exists({ _id: id });
+      if (!exists) {
+        return fail(
+          res,
+          ErrorCodes.NOT_FOUND,
+          `No document found with ${paramsIdName}: ${id}`,
+          404
+        );
+      }
+
+      req[paramsIdName] = id;
+
+      next();
+    } catch (err) {
+      next(err);
     }
-    req.validatedId = id;
-    next();
   };
 }

@@ -7,6 +7,7 @@ const ErrorCodes = {
   NOT_FOUND: "NOT_FOUND",
   INVALID_TOKEN: "INVALID_TOKEN",
   INVALID_OBJECTID: "INVALID_OBJECTID",
+  CONFLICT: "CONFLICT",
 };
 
 export default ErrorCodes;
