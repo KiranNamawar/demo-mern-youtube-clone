@@ -1,34 +1,21 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+const initialState = {
+  id: null,
+  email: null,
+  avatar: null,
+  username: null,
+  channels: [],
+  accessToken: null,
+  subscriptions: [],
+};
+
 const userSlice = createSlice({
   name: "user",
-  initialState: {
-    id: null,
-    email: null,
-    avatar: null,
-    username: null,
-    channels: [],
-    accessToken: null,
-  },
+  initialState,
   reducers: {
-    loginSuccess(state, action) {
-      const { id, email, avatar, username, channels, accessToken } =
-        action.payload;
-      state.id = id;
-      state.email = email;
-      state.avatar = avatar ?? null;
-      state.username = username;
-      state.channels = channels;
-      state.accessToken = accessToken;
-    },
-    logoutSuccess(state) {
-      state.id = null;
-      state.email = null;
-      state.avatar = null;
-      state.username = null;
-      state.channels = [];
-      state.accessToken = null;
-    },
+    loginSuccess: (state, action) => ({ ...state, ...action.payload }),
+    logoutSuccess: () => initialState,
   },
 });
 

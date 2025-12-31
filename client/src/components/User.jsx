@@ -1,10 +1,10 @@
-import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router";
+import { Plus } from "lucide-react";
 import { useEffect } from "react";
-import { Plus, User2 } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
 import api from "../lib/api";
 import { loginSuccess } from "../state/userSlice";
 import Avatar from "./Avatar";
+import LoginButton from "./LoginButton";
 
 function User() {
   const dispatch = useDispatch();
@@ -38,7 +38,7 @@ function User() {
           </span>
         </>
       ) : (
-        <Link to="/login">Login</Link>
+        <LoginButton />
       )}
     </div>
   );

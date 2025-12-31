@@ -5,7 +5,7 @@ import { Link } from "react-router";
 import User from "./User";
 import SearchBar from "./SearchBar";
 
-function Header() {
+function Header({ toggleSibeBar }) {
   const theme = useSelector((state) => state.theme);
   const logo = theme === "dark" ? "/logo_white.png" : "/logo_black.png";
 
@@ -13,7 +13,7 @@ function Header() {
     <header className="flex justify-between items-center">
       <div className="flex">
         {/* Sidebar Toggle */}
-        <button>
+        <button onClick={toggleSibeBar}>
           <Menu />
         </button>
         <Link to="/">
