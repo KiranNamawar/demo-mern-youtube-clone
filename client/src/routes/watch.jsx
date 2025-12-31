@@ -25,7 +25,6 @@ function Watch() {
   if (!success) {
     return <p>{error}</p>;
   }
-
   const {
     _id: videoId,
     videoUrl,
@@ -39,7 +38,7 @@ function Watch() {
     comments,
   } = data;
   const embedUrl = videoUrl.replace("watch?v=", "embed/");
-
+  
   return (
     <div>
       <div className="grid grid-cols-4 gap-2 p-2">
@@ -64,7 +63,7 @@ function Watch() {
             </p>
             <pre className="w-full">{description}</pre>
           </div>
-          <VideoComments comments={comments} />
+          <VideoComments comments={comments} videoId={videoId} />
         </div>
         <div>
           {relatedVideos.map((video) => (

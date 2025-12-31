@@ -1,20 +1,21 @@
-import { useState } from "react";
-
-function Icon({ src, alt, height, width, className }) {
+function Avatar({ src, alt, height, width, className }) {
+  const backupAvatarUrl = `https://api.dicebear.com/7.x/avataaars/svg?seed=${
+    alt || "default"
+  }`;
   return (
     <div className={`flex items-center rounded-full ${className}`}>
       <img
-        src={src}
+        src={src || backupAvatarUrl}
         alt={alt}
         height={height ?? 25}
         width={width ?? 25}
         className=" rounded-full object-cover"
         onError={(evt) => {
-          evt.currentTarget.src = `https://api.dicebear.com/7.x/avataaars/svg?seed=${alt}`;
+          evt.currentTarget.src = backupAvatarUrl;
         }}
       />
     </div>
   );
 }
 
-export default Icon;
+export default Avatar;
