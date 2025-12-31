@@ -1,47 +1,52 @@
-import { useEffect, useState } from "react";
-import { useLoaderData } from "react-router";
-import { useDispatch, useSelector } from "react-redux";
+import { useLoaderData, useSearchParams } from "react-router";
 import api from "../lib/api";
 import VideoCard from "../components/VideoCard";
-import { setVideos } from "../state/videosSlice";
 
-export async function homeLoader() {
-  let categories = [];
+export async function homeLoader({ request }) {
+  const url = new URL(request.url);
+  const search = url.searchParams.get("search") || "";
+  const category = url.searchParams.get("category") || "";
+
   try {
-    const res = await api.get("/videos/categories");
-    categories = res.data.data;
+    let videosEndpoint = "/videos?";
+    if (category) videosEndpoint += `category=${encodeURIComponent(category)}&`;
+    if (search) videosEndpoint += `search=${encodeURIComponent(search)}`;
+
+    const [categoriesRes, videosRes] = await Promise.all([
+      api.get("/videos/categories"),
+      api.get(videosEndpoint),
+    ]);
+    return {
+      success: true,
+      categories: categoriesRes.data.data,
+      videos: videosRes.data.data,
+    };
   } catch (err) {
     console.error(err);
+    return {
+      success: false,
+      error: err?.response?.data?.error || "Something went wrong",
+    };
   }
-  return { categories };
 }
 
 function Home() {
-  const videos = useSelector((state) => state.videos);
-  const { categories } = useLoaderData();
-  const [activeCategory, setActiveCategory] = useState("All");
+  const { success, categories, videos, error } = useLoaderData();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeCategory = searchParams.get("category") || "All";
 
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    api
-      .get(
-        `/videos?category=${
-          activeCategory === "All" ? "" : encodeURIComponent(activeCategory)
-        }`
-      )
-      .then((res) => dispatch(setVideos(res.data.data)))
-      .catch(console.error);
-  }, [activeCategory]);
+  if (!success) return <p>{error}</p>;
 
   return (
     <div>
-      <div className="flex gap-3">
+      <div className="flex gap-3 m-2">
         {["All", ...categories].map((category) => (
           <button
-            className="border"
-            onClick={() => setActiveCategory(category)}
             key={category}
+            className={activeCategory === category ? "font-bold underline" : ""}
+            onClick={() =>
+              setSearchParams({ category: category === "All" ? "" : category })
+            }
           >
             {category}
           </button>

@@ -1,46 +1,37 @@
 import { Search } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
-import api from "../lib/api";
-import { setVideos } from "../state/videosSlice";
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router";
 
 function SearchBar() {
-  const [query, setQuery] = useState("");
-  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { search } = useLocation();
+  const searchQuery = new URLSearchParams(search).get("search") || "";
+  const [query, setQuery] = useState(searchQuery);
 
-  const fetchVideos = useCallback(
-    (searchTerm) => {
-      const trimmed = searchTerm.trim();
-      const url =
-        trimmed && trimmed.length >= 3
-          ? `/videos?search=${encodeURIComponent(searchTerm)}`
-          : "/videos";
+  function handleSearch(evt) {
+    evt.preventDefault();
+    navigate(`/?search=${encodeURIComponent(query.trim())}`);
+  }
 
-      api
-        .get(url)
-        .then((res) => dispatch(setVideos(res.data.data)))
-        .catch(console.error);
-    },
-    [dispatch]
-  );
-
+  // keep searchBar value in sync with url search params
   useEffect(() => {
-    const timerId = setTimeout(() => {
-      fetchVideos(query);
-    }, 300);
-
-    return () => clearTimeout(timerId);
-  }, [query, fetchVideos]);
+    setQuery(searchQuery);
+  }, [searchQuery]);
 
   return (
     <search className="border flex items-center p-2">
-      <input
-        type="search"
-        placeholder="search for videos"
-        className="focus:outline-0"
-        value={query}
-        onChange={(evt) => setQuery(evt.target.value)}
-      />
+      <form onSubmit={handleSearch}>
+        <input
+          type="search"
+          placeholder="search for videos"
+          className="focus:outline-0"
+          value={query}
+          onChange={(evt) => setQuery(evt.target.value)}
+        />
+        <button type="submit">
+          <Search />
+        </button>
+      </form>
     </search>
   );
 }

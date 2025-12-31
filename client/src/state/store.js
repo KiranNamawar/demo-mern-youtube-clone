@@ -2,13 +2,11 @@ import { configureStore } from "@reduxjs/toolkit";
 import { themeReducer } from "./themeSlice";
 import { userReducer } from "./userSlice";
 import { authPersistenceMiddleware } from "./auth";
-import { videosReducer } from "./videosSlice";
 
 const store = configureStore({
   reducer: {
     user: userReducer,
     theme: themeReducer,
-    videos: videosReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(authPersistenceMiddleware),

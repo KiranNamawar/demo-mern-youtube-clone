@@ -16,7 +16,8 @@ function VideoComments({ comments: originalComments, videoId }) {
   const user = useSelector((state) => state.user);
   const isAuthenticated = !!user.accessToken;
 
-  function handleNewComment() {
+  function handleNewComment(evt) {
+    evt.preventDefault();
     if (newComment.trim() === "") return;
     api
       .post(`/videos/${videoId}/comments`, { content: newComment })
@@ -68,7 +69,7 @@ function VideoComments({ comments: originalComments, videoId }) {
       {/* New Comment  */}
       <div className="flex p-2 gap-2">
         <Avatar src={user.avatar} alt={user.username} />
-        <div className="border-b flex w-full">
+        <form onSubmit={handleNewComment} className="border-b flex w-full">
           <input
             type="text"
             disabled={!isAuthenticated}
@@ -82,11 +83,11 @@ function VideoComments({ comments: originalComments, videoId }) {
             className="w-full active:outline-0"
           />
           {isAuthenticated && (
-            <button onClick={handleNewComment}>
+            <button type="submit">
               <Check />
             </button>
           )}
-        </div>
+        </form>
       </div>
       {/* All comments */}
       <div className="w-full overflow-hidden">
@@ -112,7 +113,14 @@ function VideoComments({ comments: originalComments, videoId }) {
                   )}
                   {/* In Editing mode display input to edit comment */}
                   {editingComment.id === _id ? (
-                    <div className="w-full flex justify-between">
+                    <form
+                      onSubmit={
+                        isAuthenticated &&
+                        author._id === user.id &&
+                        handleEditComment
+                      }
+                      className="w-full flex justify-between"
+                    >
                       <input
                         type="text"
                         ref={editingCommentRef}
@@ -125,17 +133,10 @@ function VideoComments({ comments: originalComments, videoId }) {
                         }
                         className="w-full active:outline-0"
                       />
-                      <button
-                        title="save comment"
-                        onClick={
-                          isAuthenticated &&
-                          author._id === user.id &&
-                          handleEditComment
-                        }
-                      >
+                      <button title="save comment" type="submit">
                         <Check />
                       </button>
-                    </div>
+                    </form>
                   ) : (
                     // Render non editing comments
                     <pre dangerouslySetInnerHTML={{ __html: content }}></pre>

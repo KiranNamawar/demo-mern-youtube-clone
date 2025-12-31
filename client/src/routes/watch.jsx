@@ -8,13 +8,12 @@ import VideoComments from "../components/VideoComments";
 
 export async function watchLoader({ params }) {
   try {
-    // increment view
-    await api.patch(`/videos/${params.videoId}/views`);
-
-    const res = await api.get(`/videos/${params.videoId}`);
-    return res.data;
+    const [videoRes] = await Promise.all([
+      api.get(`/videos/${params.videoId}`), // get video data
+      api.patch(`/videos/${params.videoId}/views`).catch(console.error), // increment view
+    ]);
+    return videoRes.data;
   } catch (err) {
-    console.error(err);
     return err?.response.data;
   }
 }
@@ -22,9 +21,9 @@ export async function watchLoader({ params }) {
 function Watch() {
   useScrollToTop();
   const { success, data, error } = useLoaderData();
-  if (!success) {
-    return <p>{error}</p>;
-  }
+
+  if (!success) return <p>{error}</p>;
+
   const {
     _id: videoId,
     videoUrl,
@@ -37,8 +36,9 @@ function Watch() {
     relatedVideos,
     comments,
   } = data;
+
   const embedUrl = videoUrl.replace("watch?v=", "embed/");
-  
+
   return (
     <div>
       <div className="grid grid-cols-4 gap-2 p-2">
@@ -51,11 +51,7 @@ function Watch() {
             className="w-full aspect-video"
           />
           <p>{title}</p>
-          <VideoActions
-            channel={channelId}
-            likes={likes}
-            videoId={videoId}
-          />
+          <VideoActions channel={channelId} likes={likes} videoId={videoId} />
           <div className="overflow-hidden">
             <p className="flex gap-2">
               <span>{formatNumber(views)} views</span>
