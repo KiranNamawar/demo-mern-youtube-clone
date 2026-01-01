@@ -7,13 +7,15 @@ import {
   deleteVideo,
   getChannelDetail,
   isHandleAvailable,
+  subscribe,
+  unsubscribe,
   updateChannel,
   updateVideo,
   validateChannelId,
 } from "../controllers/channel.controller.js";
+import { validateVideoId } from "../controllers/videos.controller.js";
 import { authenticateUser } from "../middlewares/auth.js";
 import { validateBody } from "../middlewares/validation.js";
-import { validateVideoId } from "../controllers/videos.controller.js";
 
 const channelSchema = z.object({
   handle: z
@@ -54,18 +56,31 @@ router.get("/:channelId", validateChannelId, getChannelDetail);
 router.post("/check-handle", validateBody(handleSchema), isHandleAvailable);
 
 // protected channel routes
+router.patch(
+  "/:channelId/subscribe",
+  authenticateUser,
+  validateChannelId,
+  subscribe
+);
+router.patch(
+  "/:channelId/unsubscribe",
+  authenticateUser,
+  validateChannelId,
+  unsubscribe
+);
+
 router.post("/", authenticateUser, validateBody(channelSchema), createChannel);
 router.put(
   "/:channelId",
-  validateChannelId,
   authenticateUser,
+  validateChannelId,
   validateBody(channelSchema),
   updateChannel
 );
 router.delete(
   "/:channelId",
-  validateChannelId,
   authenticateUser,
+  validateChannelId,
   deleteChannel
 );
 

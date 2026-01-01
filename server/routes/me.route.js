@@ -6,7 +6,13 @@ import { ok } from "../utils/response.js";
 export async function getMyData(req, res, next) {
   const userId = req.user.id;
   try {
-    const user = await User.findById(userId).lean();
+    const user = await User.findById(userId)
+      .populate({
+        path: "channels",
+        select: "name avatar createdAt",
+        options: { sort: { createdAt: -1 } },
+      })
+      .lean();
     const subscriptions = await Channel.find({ subscribers: userId })
       .select("name avatar")
       .lean();

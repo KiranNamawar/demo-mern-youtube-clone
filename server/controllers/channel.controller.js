@@ -237,4 +237,38 @@ export async function deleteVideo(req, res, next) {
   }
 }
 
+export async function subscribe(req, res, next) {
+  try {
+    const userId = req.user.id;
+    const { channelId } = req.params;
+
+    // add userId to channel's subscribers array
+    await Channel.updateOne(
+      { _id: channelId },
+      { $push: { subscribers: userId } }
+    );
+
+    ok(res, "Subscribed to Channel successfully", null, 200);
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function unsubscribe(req, res, next) {
+  try {
+    const userId = req.user.id;
+    const { channelId } = req.params;
+
+    // remove userId from channel's subscribers array
+    await Channel.updateOne(
+      { _id: channelId },
+      { $pull: { subscribers: userId } }
+    );
+
+    ok(res, "Unsubscribed to Channel successfully", null, 200);
+  } catch (err) {
+    next(err);
+  }
+}
+
 export const validateChannelId = validateDocumentId(Channel, "channelId");

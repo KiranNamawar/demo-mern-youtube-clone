@@ -1,8 +1,8 @@
-import { User } from "../models/index.js";
-import { fail, ok } from "../utils/response.js";
-import { comparePassword, hashPassword } from "../utils/password.js";
-import { generateToken } from "../utils/jwt.js";
 import ErrorCodes from "../lib/error-codes.js";
+import { Channel, User } from "../models/index.js";
+import { generateToken } from "../utils/jwt.js";
+import { comparePassword, hashPassword } from "../utils/password.js";
+import { fail, ok } from "../utils/response.js";
 
 export async function handleRegister(req, res, next) {
   const { username, email, password, avatar } = req.validatedBody;
@@ -52,7 +52,13 @@ export async function handleLogin(req, res, next) {
   const { email, password } = req.validatedBody;
   try {
     // check if user exists
-    const existingUser = await User.findOne({ email }).lean();
+    const existingUser = await User.findOne({ email })
+      .populate({
+        path: "channels",
+        select: "name avatar createdAt",
+        options: { sort: { createdAt: -1 } },
+      })
+      .lean();
     if (!existingUser) {
       return fail(
         res,
@@ -76,6 +82,10 @@ export async function handleLogin(req, res, next) {
       );
     }
 
+    const subscriptions = await Channel.find({ subscribers: existingUser._id })
+      .select("name avatar")
+      .lean();
+
     // generate jwt
     const accessToken = generateToken({ id: existingUser._id });
 
@@ -89,6 +99,7 @@ export async function handleLogin(req, res, next) {
         username: existingUser.username,
         channels: existingUser.channels,
         accessToken,
+        subscriptions,
       },
       200
     );
