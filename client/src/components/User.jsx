@@ -23,7 +23,6 @@ function User() {
         .catch(console.error);
     }
   }, [isAuthenticated]);
-
   return (
     <div className="flex items-center">
       {isAuthenticated ? (
@@ -32,10 +31,7 @@ function User() {
             <Plus />
             <span>Create</span>
           </button>
-          <span className="flex items-center">
-            <Avatar src={user.avatar} alt={user.username} />
-            {/* <span>{user.username}</span> */}
-          </span>
+          <Avatar src={user.avatar} alt={user.username} />
         </>
       ) : (
         <LoginButton />

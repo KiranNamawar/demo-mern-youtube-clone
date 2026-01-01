@@ -19,8 +19,8 @@ function SearchBar() {
   }, [searchQuery]);
 
   return (
-    <search className="border flex items-center p-2">
-      <form onSubmit={handleSearch}>
+    <search className="border p-2 px-4 rounded-full border-fg/20">
+      <form onSubmit={handleSearch} className="flex items-center">
         <input
           type="search"
           placeholder="search for videos"

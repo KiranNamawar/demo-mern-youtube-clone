@@ -60,7 +60,6 @@ function VideoActions({ channel, likes, videoId }) {
       api.patch(`${likeEndpoint}true`).catch(() => setLikeState(prevState));
     }
   }
-  console.log(likeState);
 
   return (
     <div className="flex justify-between">

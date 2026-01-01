@@ -7,9 +7,6 @@
   --almost-black: #212121;
   --almost-white: #ffffff;
   --youtube-red: #ff0033;
-
-  --fg-color: light-dark(var(--almost-black), var(--almost-white));
-  --bg-color: light-dark(var(--almost-white), var(--almost-black));
 }
 
 :root[data-theme="light"] {
@@ -19,8 +16,32 @@
   color-scheme: dark;
 }
 
+@theme {
+  --color-fg: light-dark(var(--almost-black), var(--almost-white));
+  --color-bg: light-dark(var(--almost-white), var(--almost-black));
+  --color-fg-inverse: light-dark(var(--almost-white), var(--almost-black));
+  --color-bg-inverse: light-dark(var(--almost-black), var(--almost-white));
+  --color-surface: light-dark(#aaaaaa, #282828);
+}
+
 body {
   font-family: "Google Sans", sans-serif;
-  color: var(--fg-color);
-  background-color: var(--bg-color);
+  color: var(--color-fg);
+  background-color: var(--color-bg);
+}
+
+.btn {
+  background-color: hsl(from var(--color-fg) h s l / 0.1);
+  padding: 0.3rem 0.6rem;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+
+  &:hover {
+    background-color: hsl(from var(--color-fg) h s l / 0.3);
+  }
+  &.active {
+    background-color: var(--color-bg-inverse);
+    color: var(--color-fg-inverse);
+  }
 }

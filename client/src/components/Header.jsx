@@ -1,24 +1,18 @@
 import { Menu } from "lucide-react";
-import { useSelector } from "react-redux";
 import ThemeToggle from "./ThemeToggle";
-import { Link } from "react-router";
 import User from "./User";
 import SearchBar from "./SearchBar";
+import Logo from "./Logo";
 
-function Header({ toggleSibeBar }) {
-  const theme = useSelector((state) => state.theme);
-  const logo = theme === "dark" ? "/logo_white.png" : "/logo_black.png";
-
+function Header({ toggleSideBar }) {
   return (
     <header className="flex justify-between items-center">
       <div className="flex">
         {/* Sidebar Toggle */}
-        <button onClick={toggleSibeBar}>
+        <button onClick={toggleSideBar}>
           <Menu />
         </button>
-        <Link to="/">
-          <img src={logo} alt="YouTube Logo" width={100} />
-        </Link>
+        <Logo />
       </div>
       <SearchBar />
       <div className="flex items-center">
