@@ -2,14 +2,18 @@ import { Router } from "express";
 import z from "zod";
 import {
   createChannel,
+  createVideo,
   deleteChannel,
+  deleteVideo,
   getChannelDetail,
   isHandleAvailable,
   updateChannel,
+  updateVideo,
   validateChannelId,
 } from "../controllers/channel.controller.js";
 import { authenticateUser } from "../middlewares/auth.js";
 import { validateBody } from "../middlewares/validation.js";
+import { validateVideoId } from "../controllers/videos.controller.js";
 
 const channelSchema = z.object({
   handle: z
@@ -35,6 +39,14 @@ const handleSchema = z.object({
     }),
 });
 
+const videoSchema = z.object({
+  title: z.string({ error: "title is required" }),
+  description: z.string().optional(),
+  videoUrl: z.url({ error: "Invalid video url" }),
+  thumbnailUrl: z.url({ error: "Invalid thumbnail url" }),
+  category: z.string({ error: "category is required" }),
+});
+
 const router = Router();
 
 // public channel routes
@@ -55,6 +67,30 @@ router.delete(
   validateChannelId,
   authenticateUser,
   deleteChannel
+);
+
+// channel videos routes
+router.post(
+  "/:channelId/video",
+  authenticateUser,
+  validateChannelId,
+  validateBody(videoSchema),
+  createVideo
+);
+router.put(
+  "/:channelId/video/:videoId",
+  authenticateUser,
+  validateChannelId,
+  validateVideoId,
+  validateBody(videoSchema),
+  updateVideo
+);
+router.delete(
+  "/:channelId/video/:videoId",
+  authenticateUser,
+  validateChannelId,
+  validateVideoId,
+  deleteVideo
 );
 
 export default router;

@@ -1,6 +1,6 @@
 import ErrorCodes from "../lib/error-codes.js";
 import { validateDocumentId } from "../middlewares/validation.js";
-import { Channel, User } from "../models/index.js";
+import { Channel, User, Video } from "../models/index.js";
 import { fail, ok } from "../utils/response.js";
 
 export async function getChannelDetail(req, res, next) {
@@ -49,7 +49,7 @@ export async function createChannel(req, res, next) {
     });
 
     // add to user's channels array
-    await User.updateOne({ userId }, { $push: { channels: channel._id } });
+    await User.updateOne({ _id: userId }, { $push: { channels: channel._id } });
 
     ok(res, "Channel created successfully", channel, 201);
   } catch (err) {
@@ -108,6 +108,9 @@ export async function deleteChannel(req, res, next) {
       );
     }
 
+    // remove from user's channels array
+    await User.updateOne({ _id: userId }, { $pull: { channels: channelId } });
+
     ok(res, "Channel deleted successfully", null, 200);
   } catch (err) {
     next(err);
@@ -122,6 +125,113 @@ export async function isHandleAvailable(req, res, next) {
       return fail(res, ErrorCodes.CONFLICT, `${handle} already exists`, 409);
     }
     ok(res, `${handle} is available`, null, 200);
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function createVideo(req, res, next) {
+  try {
+    const userId = req.user.id;
+    const { channelId } = req.params;
+    const { title, description, videoUrl, thumbnailUrl, category } = req.body;
+
+    const channel = await Channel.findOne({ _id: channelId, userId });
+    if (!channel) {
+      return fail(
+        res,
+        ErrorCodes.UNAUTHORIZED,
+        "only channel owner can create video in their channel",
+        401
+      );
+    }
+
+    // create video
+    const video = await Video.create({
+      channelId,
+      title,
+      description,
+      videoUrl,
+      thumbnailUrl,
+      category,
+    });
+
+    // add video to channel's videos array
+    channel.videos.push(video._id);
+    await channel.save();
+
+    ok(res, "Video created successfully", video, 201);
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function updateVideo(req, res, next) {
+  try {
+    const userId = req.user.id;
+    const { channelId, videoId } = req.params;
+    const { title, description, videoUrl, thumbnailUrl, category } = req.body;
+
+    const channel = await Channel.findOne({
+      _id: channelId,
+      userId,
+      videos: videoId,
+    }).lean();
+    if (!channel) {
+      return fail(
+        res,
+        ErrorCodes.UNAUTHORIZED,
+        "only channel owner can update video in their channel",
+        401
+      );
+    }
+
+    // update video
+    const video = await Video.findByIdAndUpdate(
+      videoId,
+      {
+        title,
+        description,
+        videoUrl,
+        thumbnailUrl,
+        category,
+      },
+      { new: true }
+    ).lean();
+
+    ok(res, "Video updated successfully", video, 200);
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function deleteVideo(req, res, next) {
+  try {
+    const userId = req.user.id;
+    const { channelId, videoId } = req.params;
+
+    const channel = await Channel.findOne({
+      _id: channelId,
+      userId,
+      videos: videoId,
+    });
+    if (!channel) {
+      return fail(
+        res,
+        ErrorCodes.UNAUTHORIZED,
+        "only channel owner can delete video in their channel",
+        401
+      );
+    }
+
+    // delete video
+    await Video.deleteOne({ _id: videoId });
+
+    // remove video from channels videos array
+    channel.videos.pull(videoId);
+    await channel.save();
+
+    ok(res, "Video deleted successfully", null, 200);
   } catch (err) {
     next(err);
   }

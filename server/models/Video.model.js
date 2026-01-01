@@ -7,8 +7,8 @@ const videoSchema = new Schema(
     description: String,
     videoUrl: { type: String, required: true },
     thumbnailUrl: { type: String, required: true },
-    views: { type: Number, min: 0 },
-    likes: { type: Number, min: 0 },
+    views: { type: Number, min: 0, default: 0 },
+    likes: { type: Number, min: 0, default: 0 },
     category: { type: String, required: true },
   },
   { timestamps: true }
