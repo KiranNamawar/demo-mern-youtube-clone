@@ -12,17 +12,15 @@ export async function watchLoader({ params }) {
       api.get(`/videos/${params.videoId}`), // get video data
       api.patch(`/videos/${params.videoId}/views`).catch(console.error), // increment view
     ]);
-    return videoRes.data;
+    return videoRes.data.data;
   } catch (err) {
-    return err?.response.data;
+    throw new Error(err.response.data.error);
   }
 }
 
 function Watch() {
   useScrollToTop();
-  const { success, data, error } = useLoaderData();
-
-  if (!success) return <p>{error}</p>;
+  const data = useLoaderData();
 
   const {
     _id: videoId,
@@ -36,7 +34,6 @@ function Watch() {
     relatedVideos,
     comments,
   } = data;
-
   const embedUrl = videoUrl.replace("watch?v=", "embed/");
 
   return (

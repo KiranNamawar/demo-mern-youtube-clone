@@ -1,4 +1,5 @@
 import axios from "axios";
+import toast from "react-hot-toast";
 import ErrorCodes from "./error-codes";
 import store from "../state/store";
 import { logoutSuccess } from "../state/userSlice";
@@ -35,5 +36,30 @@ api.interceptors.response.use(
     return Promise.reject(err);
   }
 );
+
+export function handleApi({
+  promise,
+  onSuccess,
+  onError,
+  icon,
+  loading = "Processing...",
+}) {
+  toast.promise(promise, {
+    loading,
+    success: (res) => {
+      const data = res.data?.data;
+      const message = res.data?.message || "Success!";
+      if (onSuccess) onSuccess(data);
+      return { message, icon };
+    },
+    error: (err) => {
+      const errorCode = err.response?.data?.code;
+      const errorMessage =
+        err.response?.data?.error || err.message || "Something went wrong";
+      if (onError) onError(errorCode, errorMessage);
+      return errorMessage;
+    },
+  });
+}
 
 export default api;

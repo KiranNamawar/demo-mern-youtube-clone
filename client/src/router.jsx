@@ -3,6 +3,7 @@ import { createBrowserRouter } from "react-router";
 import App from "./App";
 import { homeLoader } from "./routes/home.jsx";
 import { watchLoader } from "./routes/watch.jsx";
+import Error from "./components/Error.jsx";
 
 const Home = lazy(() => import("./routes/home.jsx"));
 const Register = lazy(() => import("./routes/register.jsx"));
@@ -13,6 +14,7 @@ const Watch = lazy(() => import("./routes/watch.jsx"));
 const router = createBrowserRouter([
   {
     element: <App />,
+    errorElement: <Error />,
     children: [
       {
         path: "/",
