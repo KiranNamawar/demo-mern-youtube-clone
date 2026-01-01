@@ -10,6 +10,7 @@ import {
 import { formatNumber } from "../utils/format";
 import Avatar from "./Avatar";
 import api from "../lib/api";
+import SubscribeButton from "./SubscribeButton";
 
 function VideoActions({ channel, likes, videoId }) {
   const isAuthenticated = useSelector((state) => !!state.user.accessToken);
@@ -69,7 +70,7 @@ function VideoActions({ channel, likes, videoId }) {
           <p>{channel.name}</p>
           <p>{channel.subscribersCount} subscribers</p>
         </div>
-        <button>{channel.subscribed ? "Subscribed" : "Subscribe"}</button>
+        <SubscribeButton channel={channel} />
       </div>
       <div className="flex gap-2 items-center">
         <span className="flex gap-2">
