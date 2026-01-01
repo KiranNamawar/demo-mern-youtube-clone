@@ -8,6 +8,7 @@ const ErrorCodes = {
   NETWORK_ERROR: "NETWORK_ERROR",
   INVALID_TOKEN: "INVALID_TOKEN",
   INVALID_OBJECTID: "INVALID_OBJECTID",
+  CONFLICT: "CONFLICT",
 };
 
 export default ErrorCodes;

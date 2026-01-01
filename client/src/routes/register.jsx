@@ -1,10 +1,11 @@
 import { z } from "zod";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { useDispatch } from "react-redux";
 import Form from "../components/Form";
 import ErrorCodes from "../lib/error-codes";
 import { loginSuccess } from "../state/userSlice";
+import api from "../lib/api";
 
 const registerSchema = z.object({
   username: z
@@ -33,7 +34,12 @@ const registerSchema = z.object({
 
 function Register() {
   const fields = [
-    { name: "username", type: "text", defaultValue: "" },
+    {
+      name: "username",
+      type: "text",
+      defaultValue: "",
+      onInput: checkUsername,
+    },
     { name: "avatar", type: "url", defaultValue: "" },
     { name: "email", type: "email", defaultValue: "" },
     { name: "password", type: "password", defaultValue: "" },
@@ -41,12 +47,12 @@ function Register() {
   const [error, setError] = useState(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
+  
   function handleSuccess(data) {
     dispatch(loginSuccess(data));
     navigate("/");
   }
-
+  
   function handleError(code, error) {
     console.log(code, error);
     if (code === ErrorCodes.EMAIL_EXISTS) {
@@ -54,6 +60,24 @@ function Register() {
     } else {
       setError(null);
     }
+  }
+  
+  const timerRef = useRef(null);
+  function checkUsername(evt) {
+    const value = evt.target.value;
+    clearTimeout(timerRef.current);
+    setError(null);
+    if (value.length < 3) return;
+    timerRef.current = setTimeout(() => {
+      api
+        .get(`/auth/check-username/${encodeURIComponent(evt.target.value)}`)
+        .then(setError(null))
+        .catch((err) => {
+          if (err?.response.data?.code === ErrorCodes.CONFLICT) {
+            setError(err.response.data.error);
+          }
+        });
+    }, 300);
   }
 
   return (
@@ -65,6 +89,7 @@ function Register() {
         onSuccess={handleSuccess}
         onError={handleError}
         submitButtonTitle="Register"
+        disableSubmit={!!error}
       />
       {error && <div>{error}</div>}
       <div>

@@ -1,7 +1,14 @@
 import { useState } from "react";
 import { Eye, EyeClosed } from "lucide-react";
 
-function FormField({ name, type, value, onChange, errors }) {
+function FormField({
+  name,
+  type,
+  value,
+  onChange,
+  errors,
+  onInput = () => {},
+}) {
   const [showPassword, setShowPassword] = useState(false);
   const inputType = type === "password" && showPassword ? "text" : type;
   return (
@@ -14,6 +21,7 @@ function FormField({ name, type, value, onChange, errors }) {
           type={inputType}
           value={value}
           onChange={(evt) => onChange(name, evt.target.value)}
+          onInput={onInput}
           className="border w-full"
         />
         {type === "password" && (

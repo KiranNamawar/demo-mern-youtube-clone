@@ -11,6 +11,7 @@ function Form({
   onSuccess,
   onError,
   submitButtonTitle,
+  disableSubmit,
 }) {
   const defaultFormValues = useMemo(
     () => Object.fromEntries(fields.map((f) => [f.name, f.defaultValue])),
@@ -66,7 +67,7 @@ function Form({
 
   return (
     <form onSubmit={handleSubmit}>
-      {fields.map(({ name, type }) => (
+      {fields.map(({ name, type, onInput }) => (
         <FormField
           key={name}
           name={name}
@@ -74,9 +75,12 @@ function Form({
           value={formValues[name]}
           onChange={handleChange}
           errors={formErrors[name]?.errors}
+          onInput={onInput}
         />
       ))}
-      <button type="submit">{submitButtonTitle}</button>
+      <button type="submit" disabled={disableSubmit}>
+        {submitButtonTitle}
+      </button>
     </form>
   );
 }
