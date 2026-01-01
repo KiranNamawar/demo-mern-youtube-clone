@@ -31,16 +31,6 @@ const channelSchema = z.object({
   avatar: z.url({ error: "Invalid avatar image url" }).optional(),
 });
 
-const handleSchema = z.object({
-  handle: z
-    .string({ error: "handle is required" })
-    .min(3, { error: "handle must be at least 3 characters" })
-    .max(30, { error: "handle too long" })
-    .regex(/^[a-zA-Z0-9_-]+$/, {
-      error: "Only letters, numbers, _, - allowed",
-    }),
-});
-
 const videoSchema = z.object({
   title: z.string({ error: "title is required" }),
   description: z.string().optional(),
@@ -53,7 +43,7 @@ const router = Router();
 
 // public channel routes
 router.get("/:channelId", validateChannelId, getChannelDetail);
-router.post("/check-handle", validateBody(handleSchema), isHandleAvailable);
+router.get("/check-handle/:handle", isHandleAvailable);
 
 // protected channel routes
 router.patch(

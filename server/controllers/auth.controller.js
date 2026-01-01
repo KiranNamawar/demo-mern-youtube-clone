@@ -110,7 +110,7 @@ export async function handleLogin(req, res, next) {
 
 export async function isUsernameAvailable(req, res, next) {
   try {
-    const { username } = req.body;
+    const { username } = req.params;
     const exists = await User.exists({ username });
     if (exists) {
       return fail(res, ErrorCodes.CONFLICT, `${username} already exists`, 409);

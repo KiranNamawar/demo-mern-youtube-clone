@@ -119,7 +119,7 @@ export async function deleteChannel(req, res, next) {
 
 export async function isHandleAvailable(req, res, next) {
   try {
-    const { handle } = req.body;
+    const { handle } = req.params;
     const exists = await Channel.exists({ handle });
     if (exists) {
       return fail(res, ErrorCodes.CONFLICT, `${handle} already exists`, 409);

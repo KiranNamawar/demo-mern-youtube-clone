@@ -29,16 +29,6 @@ const registerSchema = z.object({
   avatar: z.url({ error: "Invalid url" }).optional(),
 });
 
-const usernameSchema = z.object({
-  username: z
-    .string({ error: "username is required" })
-    .min(3, { error: "username must be at least 3 characters" })
-    .max(30, { error: "username too long" })
-    .regex(/^[a-zA-Z0-9_-]+$/, {
-      error: "Only letters, numbers, _, - allowed",
-    }),
-});
-
 const loginSchema = z.object({
   email: z.email({ error: "Invalid email" }),
   password: z.string({ error: "password is required" }),
@@ -48,10 +38,6 @@ const router = Router();
 
 router.post("/register", validateBody(registerSchema), handleRegister);
 router.post("/login", validateBody(loginSchema), handleLogin);
-router.post(
-  "/check-username",
-  validateBody(usernameSchema),
-  isUsernameAvailable
-);
+router.get("/check-username/:username", isUsernameAvailable);
 
 export default router;
