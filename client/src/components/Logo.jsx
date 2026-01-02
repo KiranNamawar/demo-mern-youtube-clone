@@ -6,7 +6,7 @@ function Logo() {
   const logo = theme === "dark" ? "/logo_white.png" : "/logo_black.png";
   return (
     <Link to="/">
-      <img src={logo} alt="YouTube Logo" width={100} />
+      <img src={logo} alt="YouTube Logo" width={125} />
     </Link>
   );
 }

@@ -3,7 +3,7 @@ function Avatar({ src, alt, height, width, className }) {
     alt || "default"
   }`;
   return (
-    <div className={`flex items-center rounded-full ${className}`}>
+    <div className={`flex items-center rounded-full h-fit w-fit ${className}`}>
       <img
         src={src || backupAvatarUrl}
         alt={alt}

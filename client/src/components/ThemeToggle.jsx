@@ -30,7 +30,7 @@ function ThemeToggle() {
   }, [dispatch]);
 
   return (
-    <button onClick={() => dispatch(toggleTheme())}>
+    <button onClick={() => dispatch(toggleTheme())} className="btn-secondary">
       {theme === THEME.DARK ? <Sun /> : <Moon />}
     </button>
   );

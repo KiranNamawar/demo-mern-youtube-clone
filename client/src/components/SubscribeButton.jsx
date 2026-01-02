@@ -2,6 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { addSubscription, removeSubscription } from "../state/userSlice";
 import api from "../lib/api";
 import { useState } from "react";
+import Button from "./Button";
 
 function SubscribeButton({ channel }) {
   const dispatch = useDispatch();
@@ -42,7 +43,7 @@ function SubscribeButton({ channel }) {
   }
 
   return (
-    <button
+    <Button
       disabled={isPending}
       onClick={() => {
         if (isAuthenticated) {
@@ -50,9 +51,10 @@ function SubscribeButton({ channel }) {
         }
         // TODO: ask to login is not authenticated
       }}
-    >
-      {isSubscribed ? <span>Subscribed</span> : <span>Subscribe</span>}
-    </button>
+      title={isSubscribed ? "Unsubscribe" : "Subscribe"}
+      active={!isSubscribed}
+      className="rounded-3xl h-fit transition-all duration-300 ease-in-out py-2 px-4"
+    />
   );
 }
 

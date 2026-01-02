@@ -11,6 +11,7 @@ import { formatNumber } from "../utils/format";
 import Avatar from "./Avatar";
 import api from "../lib/api";
 import SubscribeButton from "./SubscribeButton";
+import Button from "./Button";
 
 function VideoActions({ channel, likes, videoId }) {
   const isAuthenticated = useSelector((state) => !!state.user.accessToken);
@@ -62,19 +63,28 @@ function VideoActions({ channel, likes, videoId }) {
   }
 
   return (
-    <div className="flex justify-between">
-      <div className="flex gap-2">
-        <Avatar src={channel.avatar} alt={channel.name} />
-        <div>
-          <p>{channel.name}</p>
-          <p>{channel.subscribersCount} subscribers</p>
+    <div className="flex justify-between gap-4">
+      <div className="flex gap-10 items-center">
+        <div className="flex gap-3 items-center">
+          <Avatar
+            src={channel.avatar}
+            alt={channel.name}
+            width={40}
+            height={40}
+          />
+          <div>
+            <p className="text-l font-medium">{channel.name}</p>
+            <p className="text-fg/50 text-xs">
+              {channel.subscribersCount} subscribers
+            </p>
+          </div>
         </div>
         <SubscribeButton channel={channel} />
       </div>
-      <div className="flex gap-2 items-center">
-        <span className="flex gap-2">
+      <div className="flex gap-4 items-center">
+        <span className="flex rounded-3xl bg-fg/10 overflow-hidden">
           <button
-            className="flex gap-2"
+            className="flex gap-2 hover:bg-fg/20 px-4 py-2"
             onClick={() =>
               // TODO: ask to login if unauthenticated
               isAuthenticated && handleLike()
@@ -82,8 +92,9 @@ function VideoActions({ channel, likes, videoId }) {
           >
             <ThumbsUp /> {formatNumber(likeState.likeCount)}
           </button>
+          <div className="border m-0 my-2"></div>
           <button
-            className="flex gap-2"
+            className="flex gap-2 hover:bg-fg/20 px-4 py-2"
             onClick={() =>
               // TODO: ask to login if unauthenticated
               isAuthenticated && handleDislike()
@@ -94,13 +105,9 @@ function VideoActions({ channel, likes, videoId }) {
         </span>
 
         {/* Static Buttons */}
-        <button className="flex gap-2">
-          <Send /> <span>Share</span>
-        </button>
-        <button className="flex gap-2">
-          <ArrowDownToLine /> <span>Download</span>
-        </button>
-        <button className="rounded-full">
+        <Button Icon={Send} title="Share" className="rounded-3xl py-2"/>
+        <Button Icon={ArrowDownToLine} title="Download" className="rounded-3xl py-2"/>
+        <button className="rounded-full btn-secondary bg-fg/10">
           <Ellipsis />
         </button>
       </div>

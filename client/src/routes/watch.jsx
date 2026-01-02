@@ -39,15 +39,15 @@ function Watch() {
   return (
     <div>
       <div className="grid grid-cols-4 gap-2 p-2">
-        <div className="col-span-3">
+        <div className="col-span-3 flex flex-col gap-4">
           <iframe
             src={embedUrl}
             title={title}
             loading="lazy"
             allowFullScreen
-            className="w-full aspect-video"
+            className="w-full aspect-video rounded-2xl"
           />
-          <p>{title}</p>
+          <p className="text-2xl">{title}</p>
           <VideoActions channel={channelId} likes={likes} videoId={videoId} />
           <div className="overflow-hidden">
             <p className="flex gap-2">

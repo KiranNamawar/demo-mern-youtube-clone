@@ -1,8 +1,9 @@
+import { useMemo, useState } from "react";
 import z from "zod";
-import { useState, useMemo } from "react";
 import api from "../lib/api";
-import FormField from "./FormField";
 import ErrorCodes from "../lib/error-codes";
+import Button from "./Button";
+import FormField from "./FormField";
 
 function Form({
   fields,
@@ -11,6 +12,7 @@ function Form({
   onSuccess,
   onError,
   submitButtonTitle,
+  submitButtonIcon,
   disableSubmit,
 }) {
   const defaultFormValues = useMemo(
@@ -78,9 +80,12 @@ function Form({
           onInput={onInput}
         />
       ))}
-      <button type="submit" disabled={disableSubmit}>
-        {submitButtonTitle}
-      </button>
+      <Button
+        type="submit"
+        disabled={disableSubmit}
+        title={submitButtonTitle}
+        Icon={submitButtonIcon}
+      />
     </form>
   );
 }

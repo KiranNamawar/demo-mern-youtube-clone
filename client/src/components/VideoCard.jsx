@@ -4,7 +4,7 @@ import { formatNumber, timeAgo } from "../utils/format";
 
 function VideoCard({ video }) {
   return (
-    <div className="">
+    <div className="rounded-2xl overflow-hidden">
       <Link to={`/watch/${video._id}`}>
         <img
           src={video.thumbnailUrl}

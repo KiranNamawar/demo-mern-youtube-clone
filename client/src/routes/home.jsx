@@ -1,7 +1,7 @@
 import { useLoaderData, useSearchParams } from "react-router";
-import clsx from "clsx";
-import api from "../lib/api";
 import VideoCard from "../components/VideoCard";
+import api from "../lib/api";
+import Button from "../components/Button";
 
 export async function homeLoader({ request }) {
   const url = new URL(request.url);
@@ -32,18 +32,14 @@ function Home() {
     <div>
       <div className="flex gap-3 m-2">
         {["All", ...categories].map((category) => (
-          <button
+          <Button
             key={category}
-            className={clsx(
-              activeCategory === category && "active",
-              "btn"
-            )}
+            active={activeCategory === category}
             onClick={() =>
               setSearchParams({ category: category === "All" ? "" : category })
             }
-          >
-            {category}
-          </button>
+            title={category}
+          />
         ))}
       </div>
       <div className="grid grid-cols-3">
