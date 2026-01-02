@@ -9,11 +9,12 @@ import {
   ThumbsUp,
 } from "lucide-react";
 import { useSelector } from "react-redux";
-import { Link } from "react-router";
+import { Link, NavLink } from "react-router";
 import Avatar from "./Avatar";
 import LoginButton from "./LoginButton";
+import clsx from "clsx";
 
-function SideBar() {
+function SideBar({ hidden }) {
   const subscriptions = useSelector((state) => state.user.subscriptions);
   const isAuthenticated = useSelector((state) => !!state.user.accessToken);
 
@@ -26,48 +27,75 @@ function SideBar() {
   ];
 
   return (
-    <div>
-      <div>
-        <Link to="/" className="flex">
+    <div
+      className={clsx(
+        "w-50 transition-transform duration-300 sticky top-16 min-h-[calc(100vh-64px)] p-4",
+        hidden ? "-translate-x-full" : "translate-x-0"
+      )}
+    >
+      <div className="flex flex-col gap-2">
+        <NavLink
+          to="/"
+          className={({ isActive }) =>
+            clsx(
+              "flex items-center gap-2 hover:bg-fg/20 p-2 rounded-xl",
+              isActive && "bg-surface"
+            )
+          }
+        >
           <Home /> <span>Home</span>
-        </Link>
-        <div className="flex">
+        </NavLink>
+        <div className="flex items-center gap-2 p-2">
           <SmartphoneCharging /> <span>Shorts</span>
         </div>
       </div>
       <br />
-      <div>
+      <div className="flex flex-col gap-2">
+        <div className="flex">
+          <span className="font-bold">Subscriptions</span>
+          <ChevronRight />
+        </div>
         {isAuthenticated ? (
-          <div>
-            <div className="flex">
-              <span>Subscriptions</span>
-              <ChevronRight />
-            </div>
+          <div className="flex flex-col gap-1">
             {subscriptions.length > 0 ? (
               subscriptions.map(({ _id, name, avatar }) => (
-                <Link to={`/channel/${_id}`}>
-                  <Avatar src={avatar} alt={name} />
-                  <span>{name}</span>
-                </Link>
+                <NavLink
+                  to={`/channel/${_id}`}
+                  className={({ isActive }) =>
+                    clsx(
+                      "grid grid-cols-5 gap-2 hover:bg-fg/20 p-2 rounded-xl",
+                      isActive && "bg-surface"
+                    )
+                  }
+                >
+                  <Avatar
+                    src={avatar}
+                    alt={name}
+                    className="h-full col-span-1"
+                  />
+                  <span className="overflow-x-hidden text-nowrap col-span-4 text-ellipsis">
+                    {name}
+                  </span>
+                </NavLink>
               ))
             ) : (
-              <p>No Subscriptions Available </p>
+              <p className="p-2">No Subscriptions Available </p>
             )}
           </div>
         ) : (
-          <div>
-            <p>Login to like videos, comment, and subscribe.</p>
+          <div className="flex flex-col gap-2 p-2">
+            <p>Login to subscribe</p>
             <LoginButton />
           </div>
         )}
       </div>
       <br />
-      <div>
+      <div className="flex flex-col gap-1">
         <div className="flex">
-          <span>You</span> <ChevronRight />
+          <span className="font-bold">You</span> <ChevronRight />
         </div>
         {youSectionItems.map(({ title, Icon }) => (
-          <div key={title} className="flex">
+          <div key={title} className="flex items-center gap-2 p-2">
             <Icon />
             <span>{title}</span>
           </div>

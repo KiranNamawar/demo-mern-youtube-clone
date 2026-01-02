@@ -21,7 +21,7 @@
   --color-bg: light-dark(var(--almost-white), var(--almost-black));
   --color-fg-inverse: light-dark(var(--almost-white), var(--almost-black));
   --color-bg-inverse: light-dark(var(--almost-black), var(--almost-white));
-  --color-surface: light-dark(#aaaaaa, #282828);
+  --color-surface: light-dark(#ccc, #333);
 }
 
 body {
@@ -30,18 +30,18 @@ body {
   background-color: var(--color-bg);
 }
 
-.btn {
-  background-color: hsl(from var(--color-fg) h s l / 0.1);
-  padding: 0.3rem 0.6rem;
-  border-radius: 8px;
-  font-weight: bold;
-  cursor: pointer;
+@utility btn {
+  @apply bg-fg/10 py-1.5 px-2.5 rounded-xl font-semibold cursor-pointer hover:bg-fg/25;
+}
 
-  &:hover {
-    background-color: hsl(from var(--color-fg) h s l / 0.3);
-  }
-  &.active {
-    background-color: var(--color-bg-inverse);
-    color: var(--color-fg-inverse);
-  }
+@utility btn-active {
+  @apply bg-fg text-bg py-1.5 px-2.5 rounded-xl font-semibold cursor-pointer;
+}
+
+@utility btn-secondary {
+  @apply hover:bg-fg/25 p-2 rounded-full cursor-pointer;
+}
+
+@utility btn-disabled {
+  @apply hover:bg-transparent bg-transparent text-fg/25 cursor-default;
 }
