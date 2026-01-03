@@ -11,9 +11,9 @@ function VideoCard({ video, isOwner = false, onDelete, channelId }) {
   const backThumbnailUrl = `https://picsum.photos/seed/${video.title}/300/200`;
 
   return (
-    <div>
+    <div className="overflow-hidden rounded-3xl h-fit cursor-pointer transition-all duration-300 ease-in-out hover:bg-surface p-2 flex flex-col gap-2">
       <div
-        className="rounded-2xl overflow-hidden grid gap-2 cursor-pointer"
+        className="grid gap-2"
         onClick={() => navigate(`/watch/${video._id}`)}
       >
         <img
@@ -22,8 +22,9 @@ function VideoCard({ video, isOwner = false, onDelete, channelId }) {
           width={400}
           loading="lazy"
           onError={(evt) => (evt.currentTarget.src = backThumbnailUrl)}
+          className="w-full object-cover rounded-2xl"
         />
-        <div className="flex justify-between gap-2">
+        <div className="flex justify-between gap-2 p-2">
           <Avatar
             src={video.channelId.avatar}
             alt={video.channelId.name}
@@ -31,7 +32,7 @@ function VideoCard({ video, isOwner = false, onDelete, channelId }) {
             width={40}
           />
           <div className="overflow-hidden flex-1">
-            <p className="truncate font-bold">{video.title}</p>
+            <p className="line-clamp-2 font-bold">{video.title}</p>
             <p className="text-fg/70">{video.channelId.name}</p>
             <p className="text-fg/70">
               {formatNumber(video.views)} views - {timeAgo(video.createdAt)}

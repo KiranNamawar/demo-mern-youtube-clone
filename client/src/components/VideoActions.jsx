@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import {
   ArrowDownToLine,
   Ellipsis,
+  Info,
   Send,
   ThumbsDown,
   ThumbsUp,
@@ -13,9 +14,13 @@ import api from "../lib/api";
 import SubscribeButton from "./SubscribeButton";
 import Button from "./Button";
 import { Link } from "react-router";
+import clsx from "clsx";
+import toast from "react-hot-toast";
 
 function VideoActions({ channel, likes, videoId }) {
   const isAuthenticated = useSelector((state) => !!state.user.accessToken);
+  const likeButtonFillColor =
+    useSelector((state) => state.theme) === "dark" ? "white" : "#212121";
   const [likeState, setLikeState] = useState({
     isLiked: false,
     isDisliked: false,
@@ -87,23 +92,30 @@ function VideoActions({ channel, likes, videoId }) {
       <div className="flex gap-4 items-center">
         <span className="flex rounded-3xl bg-fg/10 overflow-hidden">
           <button
-            className="flex gap-2 hover:bg-fg/20 px-4 py-2"
-            onClick={() =>
-              // TODO: ask to login if unauthenticated
-              isAuthenticated && handleLike()
-            }
+            className={clsx("flex gap-2 hover:bg-fg/20 px-4 py-2")}
+            onClick={() => {
+              isAuthenticated
+                ? handleLike()
+                : toast.error("Please Login to like video", { icon: <Info /> });
+            }}
           >
-            <ThumbsUp /> {formatNumber(likeState.likeCount)}
+            <ThumbsUp fill={likeState.isLiked ? likeButtonFillColor : "none"} />{" "}
+            {formatNumber(likeState.likeCount)}
           </button>
           <div className="border m-0 my-2"></div>
           <button
-            className="flex gap-2 hover:bg-fg/20 px-4 py-2"
-            onClick={() =>
-              // TODO: ask to login if unauthenticated
-              isAuthenticated && handleDislike()
-            }
+            className={clsx("flex gap-2 hover:bg-fg/20 px-4 py-2")}
+            onClick={() => {
+              isAuthenticated
+                ? handleDislike()
+                : toast.error("Please Login to dislike video", {
+                    icon: <Info />,
+                  });
+            }}
           >
-            <ThumbsDown />
+            <ThumbsDown
+              fill={likeState.isDisliked ? likeButtonFillColor : "none"}
+            />
           </button>
         </span>
 

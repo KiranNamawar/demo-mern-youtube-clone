@@ -4,6 +4,7 @@ import Avatar from "./Avatar";
 import { Check, Pen, Trash2 } from "lucide-react";
 import { useSelector } from "react-redux";
 import api from "../lib/api";
+import toast from "react-hot-toast";
 
 function VideoComments({ comments: originalComments, videoId }) {
   const [comments, setComments] = useState(originalComments);
@@ -24,6 +25,7 @@ function VideoComments({ comments: originalComments, videoId }) {
       .then(({ data }) => {
         setComments(data.data);
         setNewComment("");
+        toast.success("Comment added");
       })
       .catch(console.error);
   }
@@ -31,7 +33,10 @@ function VideoComments({ comments: originalComments, videoId }) {
   function handleDeleteComment(commentId) {
     api
       .delete(`/videos/${videoId}/comments/${commentId}`)
-      .then(({ data }) => setComments(data.data))
+      .then(({ data }) => {
+        setComments(data.data);
+        toast.success("Comment deleted", { icon: <Trash2 /> });
+      })
       .catch(console.error);
   }
 
@@ -44,6 +49,7 @@ function VideoComments({ comments: originalComments, videoId }) {
         setComments(data.data);
         setEditingComment({ id: null, content: "" });
         editingCommentRef.current = null;
+        toast.success("Comment Edited");
       })
       .catch(console.error);
   }
@@ -64,11 +70,11 @@ function VideoComments({ comments: originalComments, videoId }) {
   }, [originalComments, videoId]);
 
   return (
-    <div>
-      <p>{comments.length} Comments</p>
+    <div className="p-2 flex flex-col gap-4">
+      <p className="font-bold text-2xl">{comments.length} Comments</p>
       {/* New Comment  */}
       <div className="flex p-2 gap-2">
-        <Avatar src={user.avatar} alt={user.username} />
+        <Avatar src={user.avatar} alt={user.username} width={40} height={40} />
         <form onSubmit={handleNewComment} className="border-b flex w-full">
           <input
             type="text"
@@ -80,26 +86,34 @@ function VideoComments({ comments: originalComments, videoId }) {
             }
             value={newComment}
             onChange={(evt) => setNewComment(evt.target.value)}
-            className="w-full active:outline-0"
+            className="w-full focus:outline-0 p-2"
           />
           {isAuthenticated && (
-            <button type="submit">
+            <button type="submit" className="btn-secondary">
               <Check />
             </button>
           )}
         </form>
       </div>
       {/* All comments */}
-      <div className="w-full overflow-hidden">
+      <div className="w-full overflow-hidden flex flex-col gap-4">
         {comments.map(
           ({ _id, userId: author, content, createdAt, updatedAt }) => (
-            <div key={_id} className="flex gap-2 items-center justify-between">
-              <div className="flex gap-2 w-full">
-                <Avatar src={author.avatar} alt={author.username} />
-                <div className="w-full flex flex-col">
+            <div
+              key={_id}
+              className="flex gap-2 w-full items-center justify-between"
+            >
+              <div className="flex gap-4 w-full">
+                <Avatar
+                  src={author.avatar}
+                  alt={author.username}
+                  width={50}
+                  height={50}
+                />
+                <div className="flex w-full flex-col">
                   {/* Not in editing mode display author data */}
                   {!(editingComment.id === _id) && (
-                    <p className="flex gap-2">
+                    <p className="flex gap-4 text-fg/50">
                       <span>
                         {(!author.username.startsWith("@") ? "@" : "") +
                           author.username}
@@ -120,7 +134,7 @@ function VideoComments({ comments: originalComments, videoId }) {
                           author._id === user.id &&
                           handleEditComment();
                       }}
-                      className="w-full flex justify-between"
+                      className="flex w-full justify-between items-center  border-b"
                     >
                       <input
                         type="text"
@@ -132,15 +146,19 @@ function VideoComments({ comments: originalComments, videoId }) {
                             content: evt.target.value,
                           })
                         }
-                        className="w-full active:outline-0"
+                        className="w-full focus:outline-0"
                       />
-                      <button title="save comment" type="submit">
+                      <button
+                        title="save comment"
+                        className="btn-secondary"
+                        type="submit"
+                      >
                         <Check />
                       </button>
                     </form>
                   ) : (
                     // Render non editing comments
-                    <pre dangerouslySetInnerHTML={{ __html: content }}></pre>
+                    <p className="line-clamp-2">{content}</p>
                   )}
                 </div>
               </div>
@@ -152,12 +170,14 @@ function VideoComments({ comments: originalComments, videoId }) {
                     <button
                       title="edit comment"
                       onClick={() => setEditingComment({ id: _id, content })}
+                      className="btn-secondary"
                     >
                       <Pen />
                     </button>
                     <button
                       title="delete comment"
                       onClick={() => handleDeleteComment(_id)}
+                      className="btn-secondary"
                     >
                       <Trash2 />
                     </button>

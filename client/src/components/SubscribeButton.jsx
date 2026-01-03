@@ -3,6 +3,8 @@ import { addSubscription, removeSubscription } from "../state/userSlice";
 import api from "../lib/api";
 import { useState } from "react";
 import Button from "./Button";
+import { Info } from "lucide-react";
+import toast from "react-hot-toast";
 
 function SubscribeButton({ channel }) {
   const dispatch = useDispatch();
@@ -20,6 +22,7 @@ function SubscribeButton({ channel }) {
     dispatch(addSubscription(channel));
     api
       .patch(`/channel/${channel._id}/subscribe`)
+      .then(() => toast.success(`Subscribed to ${channel.name}`))
       .catch((err) => {
         console.error(err);
         //revert to prev state
@@ -34,6 +37,7 @@ function SubscribeButton({ channel }) {
     dispatch(removeSubscription(channel._id));
     api
       .patch(`/channel/${channel._id}/unsubscribe`)
+      .then(() => toast.success(`Unsubscribed successfully`))
       .catch((err) => {
         console.error(err);
         //revert to prev state
@@ -48,8 +52,9 @@ function SubscribeButton({ channel }) {
       onClick={() => {
         if (isAuthenticated) {
           isSubscribed ? handleUnsubscribe() : handleSubscribe();
+        } else {
+          toast.error("Please Login to subscribe", { icon: <Info /> });
         }
-        // TODO: ask to login is not authenticated
       }}
       title={isSubscribed ? "Unsubscribe" : "Subscribe"}
       active={!isSubscribed}
