@@ -5,128 +5,185 @@ import { getEnvVar } from "./utils/env.js";
 import { hashPassword } from "./utils/password.js";
 
 const DB_URL = getEnvVar("DB_URL");
-const data = JSON.parse(fs.readFileSync("./youtube_data.json", "utf-8"));
+const data = JSON.parse(fs.readFileSync("./seed_data.json", "utf-8"));
 
 // Generates a random date between two dates
 const randomDate = (start, end) => {
-  return new Date(
-    start.getTime() + Math.random() * (end.getTime() - start.getTime())
-  );
+    return new Date(
+        start.getTime() + Math.random() * (end.getTime() - start.getTime())
+    );
 };
 
 async function seed() {
-  try {
-    await mongoose.connect(DB_URL);
-    console.log("Connected to DB");
+    try {
+        await mongoose.connect(DB_URL);
+        console.log("Connected to DB");
 
-    // clear existing data
-    await Promise.all([
-      User.deleteMany({}),
-      Channel.deleteMany({}),
-      Video.deleteMany({}),
-      Comment.deleteMany({}),
-    ]);
+        // Clear existing data
+        await Promise.all([
+            User.deleteMany({}),
+            Channel.deleteMany({}),
+            Video.deleteMany({}),
+            Comment.deleteMany({}),
+        ]);
+        console.log("Cleared existing data");
 
-    const user = await User.create({
-      username: "testuser",
-      email: "user@test.com",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=testuser",
-      password: await hashPassword("Testing123"),
-    });
+        const now = new Date();
+        const oneYearAgo = new Date();
+        oneYearAgo.setFullYear(now.getFullYear() - 1);
 
-    const userCache = new Map();
+        // Step 1: Create all users (including test user)
+        console.log(`Creating ${data.users.length + 1} users...`);
 
-    const now = new Date();
-    const oneYearAgo = new Date();
-    oneYearAgo.setFullYear(now.getFullYear() - 1);
-
-    console.log(`Seeding ${data.length} channels...`);
-    for (const chan of data) {
-      const chanCreatedAt = randomDate(
-        oneYearAgo,
-        new Date(now.getTime() - 180 * 24 * 60 * 60 * 1000)
-      );
-      const newChannel = await Channel.create({
-        userId: user._id,
-        name: chan.name,
-        description: chan.description,
-        avatar: chan.avatar,
-        banner: chan.banner,
-        createdAt: chanCreatedAt,
-        updatedAt: chanCreatedAt,
-      });
-
-      for (const vid of chan.videos) {
-        const videoCreatedAt = randomDate(chanCreatedAt, now);
-
-        const newVideo = await Video.create({
-          channelId: newChannel._id,
-          title: vid.title,
-          description: vid.description,
-          videoUrl: vid.videoUrl,
-          thumbnailUrl: vid.thumbnail,
-          views: vid.views,
-          likes: vid.likes,
-          category: vid.category,
-          createdAt: videoCreatedAt,
-          updatedAt: videoCreatedAt,
+        const testUser = await User.create({
+            username: "testuser",
+            email: "user@test.com",
+            avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=testuser",
+            password: await hashPassword("Testing123"),
+            createdAt: oneYearAgo,
         });
 
-        newChannel.videos.push(newVideo._id);
+        const usernameToId = new Map();
+        usernameToId.set("testuser", testUser._id);
 
-        for (const comm of vid.comments) {
-          const commentCreatedAt = randomDate(videoCreatedAt, now);
-          const authorUsername = comm.author;
+        // Create users from seed data
+        for (const userData of data.users) {
+            const user = await User.create({
+                username: userData.username,
+                email: userData.email,
+                avatar: userData.avatar,
+                password: userData.password, // Already hashed in seed data
+                createdAt: randomDate(oneYearAgo, now),
+            });
+            usernameToId.set(userData.username, user._id);
+        }
+        console.log(`✅ Created ${usernameToId.size} users`);
 
-          let commenterId;
+        // Step 2: Create channels
+        console.log(`Creating ${data.channels.length} channels...`);
 
-          // 2. Check if we already created this user in this session
-          if (userCache.has(authorUsername)) {
-            commenterId = userCache.get(authorUsername);
-          } else {
-            // 3. Check the DB
-            let existingUser = await User.findOne({ username: authorUsername });
+        const youtubeChannelIdToMongoId = new Map();
+        const channelVideosMap = new Map(); // Track videos per channel for later
 
-            if (!existingUser) {
-              // 4. Create new user
-              const newUser = await User.create({
-                username: authorUsername,
-                avatar: comm.avatar,
-                email: `${authorUsername
-                  .replace(/[@\s]/g, "")
-                  .toLowerCase()}${Math.floor(Math.random() * 10000)}@test.com`,
-                createdAt: randomDate(oneYearAgo, commentCreatedAt),
-              });
-              existingUser = newUser;
+        for (const channelData of data.channels) {
+            const chanCreatedAt = randomDate(
+                oneYearAgo,
+                new Date(now.getTime() - 180 * 24 * 60 * 60 * 1000)
+            );
+
+            // Convert subscriber usernames to user IDs
+            const subscriberIds = channelData.subscribers
+                .map(username => usernameToId.get(username))
+                .filter(id => id !== undefined);
+
+            const newChannel = await Channel.create({
+                userId: testUser._id, // Assign all channels to test user
+                handle: channelData.handle,
+                name: channelData.name,
+                description: channelData.description,
+                avatar: channelData.avatar,
+                banner: channelData.banner,
+                subscribers: subscriberIds,
+                videos: [], // Will be populated later
+                createdAt: chanCreatedAt,
+                updatedAt: chanCreatedAt,
+            });
+
+            youtubeChannelIdToMongoId.set(channelData.youtubeChannelId, newChannel);
+            channelVideosMap.set(newChannel._id.toString(), []);
+        }
+        console.log(`✅ Created ${data.channels.length} channels`);
+
+        // Step 3: Create videos
+        console.log(`Creating ${data.videos.length} videos...`);
+
+        const youtubeVideoIdToMongoId = new Map();
+
+        for (const videoData of data.videos) {
+            const channel = youtubeChannelIdToMongoId.get(videoData.youtubeChannelId);
+
+            if (!channel) {
+                console.warn(`⚠️  Channel not found for video: ${videoData.title}`);
+                continue;
             }
 
-            // Save to cache and use the ID
-            userCache.set(authorUsername, existingUser._id);
-            commenterId = existingUser._id;
-          }
+            const videoCreatedAt = videoData.publishedAt
+                ? new Date(videoData.publishedAt)
+                : randomDate(channel.createdAt, now);
 
-          // 5. Create the comment using the commenterId
-          await Comment.create({
-            videoId: newVideo._id,
-            userId: commenterId,
-            content: comm.text,
-            createdAt: commentCreatedAt,
-            updatedAt: commentCreatedAt,
-          });
+            const newVideo = await Video.create({
+                channelId: channel._id,
+                title: videoData.title,
+                description: videoData.description,
+                videoUrl: videoData.videoUrl,
+                thumbnailUrl: videoData.thumbnail,
+                views: videoData.views,
+                likes: videoData.likes,
+                category: videoData.category,
+                createdAt: videoCreatedAt,
+                updatedAt: videoCreatedAt,
+            });
+
+            youtubeVideoIdToMongoId.set(videoData.youtubeVideoId, newVideo._id);
+            channelVideosMap.get(channel._id.toString()).push(newVideo._id);
         }
-      }
+        console.log(`✅ Created ${data.videos.length} videos`);
 
-      await newChannel.save();
+        // Step 4: Update channels with their video IDs
+        console.log("Linking videos to channels...");
+        for (const [channelId, videoIds] of channelVideosMap.entries()) {
+            await Channel.findByIdAndUpdate(channelId, { videos: videoIds });
+        }
+        console.log("✅ Videos linked to channels");
+
+        // Step 5: Create comments
+        console.log(`Creating ${data.comments.length} comments...`);
+
+        let createdComments = 0;
+        for (const commentData of data.comments) {
+            const videoId = youtubeVideoIdToMongoId.get(commentData.videoId);
+            const userId = usernameToId.get(commentData.username);
+
+            if (!videoId || !userId) {
+                continue;
+            }
+
+            const commentCreatedAt = commentData.createdAt
+                ? new Date(commentData.createdAt)
+                : randomDate(oneYearAgo, now);
+
+            await Comment.create({
+                videoId,
+                userId,
+                content: commentData.content,
+                createdAt: commentCreatedAt,
+                updatedAt: commentCreatedAt,
+            });
+
+            createdComments++;
+        }
+        console.log(`✅ Created ${createdComments} comments`);
+
+        // Summary
+        console.log("\n" + "=".repeat(60));
+        console.log("🎉 Database seeding completed successfully!");
+        console.log("=".repeat(60));
+        console.log(`📊 Summary:`);
+        console.log(`   👥 Users: ${usernameToId.size}`);
+        console.log(`   📺 Channels: ${data.channels.length}`);
+        console.log(`   🎥 Videos: ${data.videos.length}`);
+        console.log(`   💬 Comments: ${createdComments}`);
+        console.log("=".repeat(60));
+        console.log("\n🔑 Test User Credentials:");
+        console.log("   Email: user@test.com");
+        console.log("   Password: Testing123");
+        console.log("=".repeat(60));
+
+        process.exit(0);
+    } catch (err) {
+        console.error("Seeding Error: ", err);
+        process.exit(1);
     }
-
-    await user.save();
-
-    console.log("Seeding successful");
-    process.exit(0);
-  } catch (err) {
-    console.error("Seeding Error: ", err);
-    process.exit(1);
-  }
 }
 
 seed();

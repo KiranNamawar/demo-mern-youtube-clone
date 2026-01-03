@@ -36,7 +36,7 @@ const videoSchema = z.object({
   description: z.string().optional(),
   videoUrl: z.url({ error: "Invalid video url" }),
   thumbnailUrl: z.url({ error: "Invalid thumbnail url" }),
-  category: z.string({ error: "category is required" }),
+  category: z.string().min(1, { error: "category is required" }),
 });
 
 const router = Router();

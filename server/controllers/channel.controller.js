@@ -9,7 +9,8 @@ export async function getChannelDetail(req, res, next) {
     const channel = await Channel.findById(channelId)
       .populate({
         path: "videos",
-        select: "title thumbnailUrl views createdAt",
+        select:
+          "title description videoUrl thumbnailUrl views createdAt category",
         options: {
           sort: { createdAt: -1 },
         },

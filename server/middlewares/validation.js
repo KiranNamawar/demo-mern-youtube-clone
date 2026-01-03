@@ -36,7 +36,12 @@ export function validateDocumentId(Model, paramsIdName = "id") {
 
       // validate ObjectId
       if (!Types.ObjectId.isValid(id)) {
-        return fail(res, ErrorCodes.INVALID_OBJECTID, "Invalid ObjectId", 400);
+        return fail(
+          res,
+          ErrorCodes.INVALID_OBJECTID,
+          "Invalid ObjectId format id: " + id,
+          400
+        );
       }
 
       // validate documentId
@@ -45,7 +50,7 @@ export function validateDocumentId(Model, paramsIdName = "id") {
         return fail(
           res,
           ErrorCodes.NOT_FOUND,
-          `No document found with ${paramsIdName}: ${id}`,
+          `No ${paramsIdName.replace("Id", "")} found with id: ${id}`,
           404
         );
       }
