@@ -7,7 +7,7 @@ import Button from "./Button";
 import Form from "./Form";
 
 const videoSchema = z.object({
-  title: z.string({ error: "title is required" }),
+  title: z.string().min(1, { error: "title is required" }),
   description: z.string().optional(),
   videoUrl: z.url({ error: "Invalid URL" }).refine(
     (url) => {
@@ -30,27 +30,58 @@ function VideoDialog({ edit = false, video = {}, channelId }) {
   const [activeChannelId, setActiveChannelId] = useState(
     channelId ?? channels[0]?._id ?? null
   );
+  const activeChannel = channels.find((chan) => chan._id === activeChannelId);
   const [error, setError] = useState(null);
   const dialogRef = useRef(null);
 
   const fields = [
-    { name: "title", type: "text", defaultValue: video.title ?? "" },
+    {
+      name: "title",
+      type: "text",
+      defaultValue: video.title ?? "",
+      placeholder: "Enter video title",
+      required: true,
+    },
     {
       name: "description",
       type: "text",
       defaultValue: video.description ?? "",
+      placeholder: "Enter video description",
+      required: false,
     },
-    { name: "videoUrl", type: "url", defaultValue: video.videoUrl ?? "" },
+    {
+      name: "videoUrl",
+      type: "url",
+      defaultValue: video.videoUrl ?? "",
+      placeholder: "Enter YouTube video URL",
+      required: true,
+    },
     {
       name: "thumbnailUrl",
       type: "url",
       defaultValue: video.thumbnailUrl ?? "",
+      placeholder: "Enter video thumbnail URL",
+      required: true,
     },
-    { name: "category", type: "text", defaultValue: video.category ?? "" },
+    {
+      name: "category",
+      type: "text",
+      defaultValue: video.category ?? "",
+      placeholder: "Enter video category",
+      required: true,
+    },
   ];
 
-  const openDialog = () => dialogRef.current.showModal();
-  const closeDialog = () => dialogRef.current.close();
+  const [isOpen, setIsOpen] = useState(true);
+  const openDialog = () => {
+    setIsOpen(true);
+    dialogRef.current.showModal();
+  };
+  const closeDialog = () => {
+    setIsOpen(false);
+    setError(null);
+    dialogRef.current.close();
+  };
 
   function handleSuccess(data) {
     if (edit) {
@@ -83,45 +114,53 @@ function VideoDialog({ edit = false, video = {}, channelId }) {
           openDialog();
         }}
       />
-      <dialog ref={dialogRef}>
-        <div className="p-10 flex flex-col items-center gap-4">
-          <div className="flex justify-between w-full items-center">
-            <h2>{title}</h2>
-            <button className="btn-secondary" onClick={closeDialog}>
-              <X />
-            </button>
-          </div>
-          <div>
-            {edit ? (
-              <p>
-                {channels.find((chan) => chan._id === activeChannelId).name}
-              </p>
-            ) : (
-              <select onChange={(evt) => setActiveChannelId(evt.target.value)}>
-                {channels.map((chan) => (
-                  <option
-                    key={chan._id}
-                    value={chan._id}
-                    className="flex items-center gap-4"
+      <dialog ref={dialogRef} onCancel={closeDialog}>
+        {isOpen && (
+          <div className="p-10 flex flex-col items-center gap-4">
+            <div className="flex justify-between w-full items-center">
+              <h2 className="text-3xl font-semibold">{title}</h2>
+              <button className="btn-secondary" onClick={closeDialog}>
+                <X />
+              </button>
+            </div>
+            <div>
+              {edit ? (
+                <p>Channel: {activeChannel.name}</p>
+              ) : (
+                <div>
+                  <label htmlFor="channel-select" className="font-semibold">
+                    Channel:{" "}
+                  </label>
+                  <select
+                    id="channel-select"
+                    onChange={(evt) => setActiveChannelId(evt.target.value)}
                   >
-                    {chan.name}
-                  </option>
-                ))}
-              </select>
-            )}
+                    {channels.map((chan) => (
+                      <option
+                        key={chan._id}
+                        value={chan._id}
+                        className="flex items-center gap-4"
+                      >
+                        {chan.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+            </div>
+            <Form
+              fields={fields}
+              schema={videoSchema}
+              onSuccess={handleSuccess}
+              onError={handleError}
+              submitPath={submitPath}
+              submitButtonTitle={title}
+              disableSubmit={!!error || channels.length === 0}
+              method={method}
+            />
+            {error && <div className="text-red-400">{error}</div>}
           </div>
-          <Form
-            fields={fields}
-            schema={videoSchema}
-            onSuccess={handleSuccess}
-            onError={handleError}
-            submitPath={submitPath}
-            submitButtonTitle={title}
-            disableSubmit={!!error || channels.length === 0}
-            method={method}
-          />
-          {error && <div>{error}</div>}
-        </div>
+        )}
       </dialog>
     </div>
   );

@@ -52,8 +52,6 @@ function Form({
     // send to server
     try {
       const response = await api[method](submitPath, result.data);
-      setFormErrors({});
-      setFormValues(Object.fromEntries(fields.map((f) => [f.name, ""])));
       onSuccess(response.data.data);
       toast.success(response.data.message);
     } catch (err) {
@@ -74,8 +72,12 @@ function Form({
   }
 
   return (
-    <form onSubmit={handleSubmit} method={dialog ? "dialog" : "post"}>
-      {fields.map(({ name, type, onInput }) => (
+    <form
+      onSubmit={handleSubmit}
+      method={dialog ? "dialog" : "post"}
+      className="flex flex-col gap-4 w-120"
+    >
+      {fields.map(({ name, type, onInput, placeholder, required }) => (
         <FormField
           key={name}
           name={name}
@@ -84,6 +86,8 @@ function Form({
           onChange={handleChange}
           errors={formErrors[name]?.errors}
           onInput={onInput}
+          placeholder={placeholder}
+          required={required}
         />
       ))}
       <Button
@@ -91,6 +95,7 @@ function Form({
         disabled={disableSubmit}
         title={submitButtonTitle}
         Icon={submitButtonIcon}
+        className="w-fit self-center px-8 py-3"
       />
     </form>
   );

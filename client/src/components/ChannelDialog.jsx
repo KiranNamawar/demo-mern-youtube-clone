@@ -17,7 +17,7 @@ const channelSchema = z.object({
     .regex(/^[a-zA-Z0-9_-]+$/, {
       error: "Only letters, numbers, _, - allowed",
     }),
-  name: z.string({ error: "name is required" }),
+  name: z.string().min(1, { error: "name is required" }),
   description: z.string().optional(),
   banner: z.preprocess(
     (v) => (v === "" ? undefined : v),
@@ -38,20 +38,42 @@ function ChannelDialog({ edit = false, channel = {} }) {
   const [error, setError] = useState(null);
 
   const fields = [
-    { name: "name", type: "text", defaultValue: channel.name ?? "" },
+    {
+      name: "name",
+      type: "text",
+      defaultValue: channel.name ?? "",
+      placeholder: "Enter channel name",
+      required: true,
+    },
     {
       name: "handle",
       type: "text",
       defaultValue: channel.handle ?? "",
+      placeholder: "Enter unique handle for channel",
+      required: true,
       onInput: checkHandle,
     },
     {
       name: "description",
       type: "text",
       defaultValue: channel.description ?? "",
+      placeholder: "Enter channel description",
+      required: false,
     },
-    { name: "avatar", type: "url", defaultValue: channel.avatar ?? "" },
-    { name: "banner", type: "url", defaultValue: channel.banner ?? "" },
+    {
+      name: "avatar",
+      type: "url",
+      defaultValue: channel.avatar ?? "",
+      placeholder: "Enter channel avatar URL",
+      required: false,
+    },
+    {
+      name: "banner",
+      type: "url",
+      defaultValue: channel.banner ?? "",
+      placeholder: "Enter channel banner URL",
+      required: false,
+    },
   ];
 
   const timerRef = useRef(null);
@@ -60,6 +82,7 @@ function ChannelDialog({ edit = false, channel = {} }) {
     clearTimeout(timerRef.current);
     setError(null);
     if (value.length < 3) return;
+    if (edit && value === channel.handle) return;
     timerRef.current = setTimeout(() => {
       api
         .get(`/channel/check-handle/${encodeURIComponent(value)}`)
@@ -72,8 +95,16 @@ function ChannelDialog({ edit = false, channel = {} }) {
     }, 300);
   }
 
-  const openDialog = () => dialogRef.current.showModal();
-  const closeDialog = () => dialogRef.current.close();
+  const [isOpen, setIsOpen] = useState(true);
+  const openDialog = () => {
+    setIsOpen(true);
+    dialogRef.current.showModal();
+  };
+  const closeDialog = () => {
+    setIsOpen(false);
+    setError(null);
+    dialogRef.current.close();
+  };
 
   function handleSuccess(data) {
     if (edit) {
@@ -87,7 +118,10 @@ function ChannelDialog({ edit = false, channel = {} }) {
   }
 
   function handleError(code, error) {
-    setError(error);
+    if (code === ErrorCodes.CONFLICT) {
+      setError(error);
+    }
+    console.error(error);
   }
 
   const title = edit ? "Edit Channel" : "Create Channel";
@@ -105,26 +139,28 @@ function ChannelDialog({ edit = false, channel = {} }) {
           openDialog();
         }}
       />
-      <dialog ref={dialogRef}>
-        <div className="p-10 flex flex-col items-center gap-4">
-          <div className="flex justify-between w-full items-center">
-            <h2>{title}</h2>
-            <button className="btn-secondary" onClick={closeDialog}>
-              <X />
-            </button>
+      <dialog ref={dialogRef} onCancel={closeDialog}>
+        {isOpen && (
+          <div className="p-10 flex flex-col items-center gap-4">
+            <div className="flex justify-between w-full items-center">
+              <h2 className="text-3xl font-semibold">{title}</h2>
+              <button className="btn-secondary" onClick={closeDialog}>
+                <X />
+              </button>
+            </div>
+            <Form
+              fields={fields}
+              schema={channelSchema}
+              onSuccess={handleSuccess}
+              onError={handleError}
+              submitPath={submitPath}
+              submitButtonTitle={title}
+              disableSubmit={!!error}
+              method={method}
+            />
+            {error && <div className="text-red-400">{error}</div>}
           </div>
-          <Form
-            fields={fields}
-            schema={channelSchema}
-            onSuccess={handleSuccess}
-            onError={handleError}
-            submitPath={submitPath}
-            submitButtonTitle={title}
-            disableSubmit={!!error}
-            method={method}
-          />
-          {error && <div>{error}</div>}
-        </div>
+        )}
       </dialog>
     </div>
   );
