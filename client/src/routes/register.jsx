@@ -6,6 +6,7 @@ import Form from "../components/Form";
 import ErrorCodes from "../lib/error-codes";
 import { loginSuccess } from "../state/userSlice";
 import api from "../lib/api";
+import toast from "react-hot-toast";
 
 const registerSchema = z.object({
   username: z
@@ -47,12 +48,12 @@ function Register() {
   const [error, setError] = useState(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  
+
   function handleSuccess(data) {
     dispatch(loginSuccess(data));
     navigate("/");
   }
-  
+
   function handleError(code, error) {
     console.log(code, error);
     if (code === ErrorCodes.EMAIL_EXISTS) {
@@ -61,7 +62,7 @@ function Register() {
       setError(null);
     }
   }
-  
+
   const timerRef = useRef(null);
   function checkUsername(evt) {
     const value = evt.target.value;
@@ -71,7 +72,7 @@ function Register() {
     timerRef.current = setTimeout(() => {
       api
         .get(`/auth/check-username/${encodeURIComponent(evt.target.value)}`)
-        .then(setError(null))
+        .then((res) => setError(null))
         .catch((err) => {
           if (err?.response.data?.code === ErrorCodes.CONFLICT) {
             setError(err.response.data.error);

@@ -114,11 +114,12 @@ function VideoComments({ comments: originalComments, videoId }) {
                   {/* In Editing mode display input to edit comment */}
                   {editingComment.id === _id ? (
                     <form
-                      onSubmit={
+                      onSubmit={(evt) => {
+                        evt.preventDefault();
                         isAuthenticated &&
-                        author._id === user.id &&
-                        handleEditComment
-                      }
+                          author._id === user.id &&
+                          handleEditComment();
+                      }}
                       className="w-full flex justify-between"
                     >
                       <input

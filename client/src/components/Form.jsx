@@ -1,9 +1,10 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import z from "zod";
 import api from "../lib/api";
 import ErrorCodes from "../lib/error-codes";
 import Button from "./Button";
 import FormField from "./FormField";
+import toast from "react-hot-toast";
 
 function Form({
   fields,
@@ -14,6 +15,8 @@ function Form({
   submitButtonTitle,
   submitButtonIcon,
   disableSubmit,
+  dialog = false,
+  method = "post",
 }) {
   const defaultFormValues = useMemo(
     () => Object.fromEntries(fields.map((f) => [f.name, f.defaultValue])),
@@ -23,6 +26,7 @@ function Form({
   const [formErrors, setFormErrors] = useState({});
 
   function handleChange(name, value) {
+    onError(null, null);
     setFormValues((prev) => ({ ...prev, [name]: value }));
 
     // clear field errors on change
@@ -47,9 +51,11 @@ function Form({
 
     // send to server
     try {
-      const response = await api.post(submitPath, result.data);
+      const response = await api[method](submitPath, result.data);
       setFormErrors({});
+      setFormValues(Object.fromEntries(fields.map((f) => [f.name, ""])));
       onSuccess(response.data.data);
+      toast.success(response.data.message);
     } catch (err) {
       if (err.response) {
         const { code, error } = err.response.data;
@@ -59,7 +65,7 @@ function Form({
           setFormErrors(err.response.data.errors);
           return;
         }
-
+        console.log(error);
         onError(code, error);
       } else {
         onError(ErrorCodes.NETWORK_ERROR, err.message);
@@ -68,7 +74,7 @@ function Form({
   }
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} method={dialog ? "dialog" : "post"}>
       {fields.map(({ name, type, onInput }) => (
         <FormField
           key={name}

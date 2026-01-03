@@ -25,7 +25,10 @@ const userSlice = createSlice({
       );
     },
     addChannel: (state, action) => {
-      state.channels.unshift(action.payload);
+      const exists = state.channels.some(
+        (chan) => chan._id === action.payload._id
+      );
+      if (!exists) state.channels.unshift(action.payload);
     },
     updateChannel: (state, action) => {
       state.channels = state.channels.map((chan) =>
