@@ -29,8 +29,8 @@ function Home() {
   const activeCategory = searchParams.get("category") || "All";
 
   return (
-    <div>
-      <div className="flex gap-3 m-2">
+    <div className="h-full">
+      <div className="flex gap-3 p-2 pb-4 sticky top-14.5 bg-bg/95">
         {["All", ...categories].map((category) => (
           <Button
             key={category}
@@ -42,11 +42,19 @@ function Home() {
           />
         ))}
       </div>
-      <div className="grid grid-cols-3">
+      <div className="flex h-full justify-center">
         {videos.length > 0 ? (
-          videos.map((video) => <VideoCard video={video} key={video._id} />)
+          <div className="grid grid-cols-3 gap-4">
+            {videos.map((video) => (
+              <VideoCard video={video} key={video._id} />
+            ))}
+          </div>
         ) : (
-          <p>No videos found for term "{searchParams.get("search")}"</p>
+          <div className="h-full flex justify-center items-center">
+            <p className="font-semibold text-2xl">
+              No videos found for "{searchParams.get("search")}"
+            </p>
+          </div>
         )}
       </div>
     </div>

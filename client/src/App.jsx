@@ -21,18 +21,20 @@ function App() {
         >
           <SideBar hidden={sideBarHidden} />
         </aside>
-        <main className="flex-1">
+        <main className="flex-1 p-2">
           <Suspense fallback={<Loading />}>
             <Outlet />
           </Suspense>
+          <div className="h-6"></div>
         </main>
       </div>
       <Toaster
-        position="bottom-right"
+        position="bottom-left"
         toastOptions={{
           style: {
             background: "var(--color-bg-inverse)",
             color: "var(--color-fg-inverse)",
+            fontWeight: "bold",
           },
           success: {
             icon: <CheckCircle className="text-green-500" size={20} />,

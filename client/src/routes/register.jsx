@@ -40,11 +40,32 @@ function Register() {
       type: "text",
       defaultValue: "",
       onInput: checkUsername,
+      placeholder: "Enter unique username",
+      required: true,
     },
-    { name: "avatar", type: "url", defaultValue: "" },
-    { name: "email", type: "email", defaultValue: "" },
-    { name: "password", type: "password", defaultValue: "" },
+    {
+      name: "avatar",
+      type: "url",
+      defaultValue: "",
+      placeholder: "Enter avatar URL",
+      required: false,
+    },
+    {
+      name: "email",
+      type: "email",
+      defaultValue: "",
+      placeholder: "Enter your email",
+      required: true,
+    },
+    {
+      name: "password",
+      type: "password",
+      defaultValue: "",
+      placeholder: "Enter strong password",
+      required: true,
+    },
   ];
+
   const [error, setError] = useState(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -55,11 +76,8 @@ function Register() {
   }
 
   function handleError(code, error) {
-    console.log(code, error);
     if (code === ErrorCodes.EMAIL_EXISTS) {
       setError(error);
-    } else {
-      setError(null);
     }
   }
 
@@ -82,7 +100,8 @@ function Register() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen justify-center items-center">
+    <div className="flex flex-col gap-4 h-full justify-center items-center">
+      <h2 className="text-4xl font-bold">Register</h2>
       <Form
         fields={fields}
         schema={registerSchema}
@@ -92,9 +111,9 @@ function Register() {
         submitButtonTitle="Register"
         disableSubmit={!!error}
       />
-      {error && <div>{error}</div>}
+      {error && <div className="text-red-400">{error}</div>}
       <div>
-        Already have an account? <Link to="/login">Login</Link>
+        Already have an account? <Link to="/login" className="text-blue-400 underline font-semibold text-lg">Login</Link>
       </div>
     </div>
   );

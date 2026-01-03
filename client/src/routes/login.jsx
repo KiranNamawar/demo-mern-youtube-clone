@@ -8,13 +8,25 @@ import Form from "../components/Form";
 
 const loginSchema = z.object({
   email: z.email({ error: "Invalid email" }),
-  password: z.string({ error: "password is required" }),
+  password: z.string().min(1, { error: "password is required" }),
 });
 
 function Login() {
   const fields = [
-    { name: "email", type: "email", defaultValue: "" },
-    { name: "password", type: "password", defaultValue: "" },
+    {
+      name: "email",
+      type: "email",
+      defaultValue: "",
+      placeholder: "Enter your email",
+      required: true,
+    },
+    {
+      name: "password",
+      type: "password",
+      defaultValue: "",
+      placeholder: "Enter your password",
+      required: true,
+    },
   ];
 
   const [error, setError] = useState(null);
@@ -36,7 +48,8 @@ function Login() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen justify-center items-center">
+    <div className="flex flex-col h-full gap-4 justify-center items-center">
+      <h2 className="text-4xl font-bold">Login</h2>
       <Form
         fields={fields}
         schema={loginSchema}
@@ -45,9 +58,15 @@ function Login() {
         onError={handleError}
         submitButtonTitle="Login"
       />
-      {error && <div>{error}</div>}
+      {error && <div className="text-red-400">{error}</div>}
       <div>
-        Don't have an account? <Link to="/register">Register</Link>
+        Don't have an account?{" "}
+        <Link
+          to="/register"
+          className="text-blue-400 underline font-semibold text-lg"
+        >
+          Register
+        </Link>
       </div>
     </div>
   );

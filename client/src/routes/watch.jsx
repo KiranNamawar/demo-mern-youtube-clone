@@ -5,6 +5,8 @@ import VideoCard from "../components/VideoCard";
 import { useScrollToTop } from "../hooks/scroll";
 import VideoActions from "../components/VideoActions";
 import VideoComments from "../components/VideoComments";
+import { useState } from "react";
+import clsx from "clsx";
 
 export async function watchLoader({ params }) {
   try {
@@ -22,6 +24,8 @@ function Watch() {
   useScrollToTop();
   const data = useLoaderData();
 
+  const [viewMoreDescription, setViewMoreDescription] = useState(false);
+
   const {
     _id: videoId,
     videoUrl,
@@ -37,7 +41,7 @@ function Watch() {
   const embedUrl = videoUrl.replace("watch?v=", "embed/");
 
   return (
-    <div>
+    <div className="">
       <div className="grid grid-cols-4 gap-2 p-2">
         <div className="col-span-3 flex flex-col gap-4">
           <iframe
@@ -47,14 +51,26 @@ function Watch() {
             allowFullScreen
             className="w-full aspect-video rounded-2xl"
           />
-          <p className="text-2xl">{title}</p>
+          <p className="text-2xl font-semibold">{title}</p>
           <VideoActions channel={channelId} likes={likes} videoId={videoId} />
-          <div className="overflow-hidden">
-            <p className="flex gap-2">
+          <div className="overflow-hidden bg-surface p-4 rounded-2xl flex flex-col">
+            <p className="flex gap-4 font-bold">
               <span>{formatNumber(views)} views</span>
               <span>{timeAgo(createdAt)}</span>
             </p>
-            <pre className="w-full">{description}</pre>
+            <pre
+              className={clsx("mt-2 transition-all duration-300", {
+                "line-clamp-5": !viewMoreDescription,
+              })}
+            >
+              {description}
+            </pre>
+            <button
+              onClick={() => setViewMoreDescription(!viewMoreDescription)}
+              className="font-semibold text-lg self-end"
+            >
+              view {viewMoreDescription ? "less" : "more"}
+            </button>
           </div>
           <VideoComments comments={comments} videoId={videoId} />
         </div>

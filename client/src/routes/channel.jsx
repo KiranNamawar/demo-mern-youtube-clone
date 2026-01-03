@@ -69,7 +69,7 @@ function Channel() {
   const backupBannerUrl = `https://picsum.photos/seed/${name}/800/200`;
 
   return (
-    <div className="flex flex-col gap-4 min-h-screen">
+    <div className="flex flex-col gap-4 min-h-screen p-2">
       <div className="w-full h-50 rounded-2xl overflow-hidden">
         <img
           src={banner ?? backupBannerUrl}
@@ -83,11 +83,9 @@ function Channel() {
         <div className="w-full flex flex-col gap-2">
           <h1 className="text-3xl">{name}</h1>
           <div className="flex gap-4">
-            {handle && (
-              <span className="font-bold">
-                {handle.startsWith("@") ? handle : "@" + handle}
-              </span>
-            )}
+            <span className="font-bold">
+              {handle?.startsWith("@") ? handle : "@" + handle}
+            </span>
             <span className="text-fg/70">
               {formatNumber(subscriberCount)} subscribers
             </span>
@@ -95,7 +93,7 @@ function Channel() {
               {formatNumber(videos.length)} videos
             </span>
           </div>
-          <p className="line-clamp-1 overflow-hidden w-full text-fg/80">
+          <p className="line-clamp-2 overflow-hidden w-full text-fg/80 max-w-4xl">
             {description}
           </p>
           {isOwner ? (
@@ -112,10 +110,10 @@ function Channel() {
           )}
         </div>
       </div>
-      <div className="w-full border border-fg/20"></div>
+      <div className="w-full border border-fg/20 mt-4 mx-2 m-auto"></div>
       <div className="flex flex-1 h-full">
         {videos.length > 0 ? (
-          <div className="grid grid-cols-3">
+          <div className="grid grid-cols-3 gap-4">
             {videos.map((video) => (
               <VideoCard
                 video={{ ...video, channelId: { _id, name, avatar } }}
