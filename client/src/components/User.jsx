@@ -1,11 +1,15 @@
-import { LogOut, Plus, Tv, TvMinimal, Video } from "lucide-react";
-import { useEffect } from "react";
+import { LogOut, Plus, TvMinimal, Video } from "lucide-react";
+import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import api from "../lib/api";
 import { loginSuccess, logoutSuccess } from "../state/userSlice";
 import Avatar from "./Avatar";
 import LoginButton from "./LoginButton";
 import Button from "./Button";
+import ChannelDialog from "./ChannelDialog";
+import VideoDialog from "./VideoDialog";
+import toast from "react-hot-toast";
+import { Link } from "react-router";
 
 function User() {
   const dispatch = useDispatch();
@@ -25,7 +29,6 @@ function User() {
     }
   }, [isAuthenticated]);
 
-  console.log(user);
   return (
     <div className="flex items-center gap-4">
       {isAuthenticated ? (
@@ -37,12 +40,8 @@ function User() {
             className="fixed top-14 right-4 m-0 left-auto min-w-55 p-4 rounded-xl bg-surface"
           >
             <div className="flex flex-col items-center gap-4">
-              <Button Icon={TvMinimal} title="Create Channel" />
-              <Button
-                disabled={user.channels.length === 0}
-                Icon={Video}
-                title="Upload Video"
-              />
+              <ChannelDialog />
+              <VideoDialog />
             </div>
           </div>
           <button popoverTarget="user-profile" className="cursor-pointer">
@@ -58,7 +57,7 @@ function User() {
             id="user-profile"
             className="fixed top-14 right-4 m-0 left-auto min-w-60 p-4 rounded-xl bg-surface"
           >
-            <div className="flex flex-col items-center gap-4 justify-between">
+            <div className="flex flex-col items-center gap-3 justify-between">
               <Avatar
                 src={user.avatar}
                 alt={user.username}
@@ -69,8 +68,32 @@ function User() {
                 <p className="font-bold">{user.email}</p>
                 <p className="text-fg/50">{user.username}</p>
               </div>
+              <div className="border w-full border-fg/20"></div>
+              <div className="flex flex-col items-center gap-2">
+                <h3 className="text-xl font-semibold">My Channels</h3>
+                {user.channels.length > 0 ? (
+                  <div>
+                    {user.channels.map((chan) => (
+                      <Link
+                        key={chan._id}
+                        to={`/channel/${chan._id}`}
+                        className="flex gap-2 btn-secondary"
+                      >
+                        <Avatar src={chan.avatar} alt={chan.name} />
+                        <span>{chan.name}</span>
+                      </Link>
+                    ))}
+                  </div>
+                ) : (
+                  <p>No Channels found</p>
+                )}
+              </div>
+              <div className="border w-full border-fg/20"></div>
               <Button
-                onClick={() => dispatch(logoutSuccess())}
+                onClick={() => {
+                  dispatch(logoutSuccess());
+                  toast.success("Logout Successful");
+                }}
                 Icon={LogOut}
                 title="Logout"
               />

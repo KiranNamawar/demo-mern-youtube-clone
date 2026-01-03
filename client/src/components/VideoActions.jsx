@@ -12,6 +12,7 @@ import Avatar from "./Avatar";
 import api from "../lib/api";
 import SubscribeButton from "./SubscribeButton";
 import Button from "./Button";
+import { Link } from "react-router";
 
 function VideoActions({ channel, likes, videoId }) {
   const isAuthenticated = useSelector((state) => !!state.user.accessToken);
@@ -73,7 +74,9 @@ function VideoActions({ channel, likes, videoId }) {
             height={40}
           />
           <div>
-            <p className="text-l font-medium">{channel.name}</p>
+            <Link to={`/channel/${channel._id}`}>
+              <p className="text-l font-medium">{channel.name}</p>
+            </Link>
             <p className="text-fg/50 text-xs">
               {channel.subscribersCount} subscribers
             </p>
@@ -105,8 +108,12 @@ function VideoActions({ channel, likes, videoId }) {
         </span>
 
         {/* Static Buttons */}
-        <Button Icon={Send} title="Share" className="rounded-3xl py-2"/>
-        <Button Icon={ArrowDownToLine} title="Download" className="rounded-3xl py-2"/>
+        <Button Icon={Send} title="Share" className="rounded-3xl py-2" />
+        <Button
+          Icon={ArrowDownToLine}
+          title="Download"
+          className="rounded-3xl py-2"
+        />
         <button className="rounded-full btn-secondary bg-fg/10">
           <Ellipsis />
         </button>
