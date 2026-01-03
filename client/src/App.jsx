@@ -31,8 +31,8 @@ function App() {
         position="bottom-right"
         toastOptions={{
           style: {
-            background: "var(--bg-color-inverse)",
-            color: "var(--fg-color-inverse)",
+            background: "var(--color-bg-inverse)",
+            color: "var(--color-fg-inverse)",
           },
           success: {
             icon: <CheckCircle className="text-green-500" size={20} />,

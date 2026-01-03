@@ -53,7 +53,7 @@ function SubscribeButton({ channel }) {
       }}
       title={isSubscribed ? "Unsubscribe" : "Subscribe"}
       active={!isSubscribed}
-      className="rounded-3xl h-fit transition-all duration-300 ease-in-out py-2 px-4"
+      className="rounded-3xl h-fit w-fit transition-all duration-300 ease-in-out py-2 px-4"
     />
   );
 }

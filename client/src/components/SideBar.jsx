@@ -9,7 +9,7 @@ import {
   ThumbsUp,
 } from "lucide-react";
 import { useSelector } from "react-redux";
-import { Link, NavLink } from "react-router";
+import { NavLink } from "react-router";
 import Avatar from "./Avatar";
 import LoginButton from "./LoginButton";
 import clsx from "clsx";
@@ -49,7 +49,7 @@ function SideBar({ hidden }) {
           <SmartphoneCharging /> <span>Shorts</span>
         </div>
       </div>
-      <br />
+      <div className="border border-fg/50 my-4"></div>
       <div className="flex flex-col gap-2">
         <div className="flex">
           <span className="font-bold">Subscriptions</span>
@@ -60,6 +60,7 @@ function SideBar({ hidden }) {
             {subscriptions.length > 0 ? (
               subscriptions.map(({ _id, name, avatar }) => (
                 <NavLink
+                  key={_id}
                   to={`/channel/${_id}`}
                   className={({ isActive }) =>
                     clsx(
@@ -89,7 +90,7 @@ function SideBar({ hidden }) {
           </div>
         )}
       </div>
-      <br />
+      <div className="border border-fg/50 my-4"></div>
       <div className="flex flex-col gap-1">
         <div className="flex">
           <span className="font-bold">You</span> <ChevronRight />

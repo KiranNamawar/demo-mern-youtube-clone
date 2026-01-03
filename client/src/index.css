@@ -45,3 +45,11 @@ body {
 @utility btn-disabled {
   @apply hover:bg-transparent bg-transparent text-fg/25 cursor-default;
 }
+
+dialog {
+  @apply rounded-2xl border-none p-0 shadow-2xl bg-bg text-fg m-auto;
+}
+
+dialog::backdrop {
+  @apply bg-black/50 backdrop-blur-sm;
+}
