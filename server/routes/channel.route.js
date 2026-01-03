@@ -25,14 +25,14 @@ const channelSchema = z.object({
     .regex(/^[a-zA-Z0-9_-]+$/, {
       error: "Only letters, numbers, _, - allowed",
     }),
-  name: z.string({ error: "name is required" }),
+  name: z.string().min(1, { error: "name is required" }),
   description: z.string().optional(),
   banner: z.url({ error: "Invalid banner image url" }).optional(),
   avatar: z.url({ error: "Invalid avatar image url" }).optional(),
 });
 
 const videoSchema = z.object({
-  title: z.string({ error: "title is required" }),
+  title: z.string().min(1, { error: "title is required" }),
   description: z.string().optional(),
   videoUrl: z.url({ error: "Invalid video url" }),
   thumbnailUrl: z.url({ error: "Invalid thumbnail url" }),

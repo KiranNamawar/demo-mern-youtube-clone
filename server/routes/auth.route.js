@@ -31,7 +31,7 @@ const registerSchema = z.object({
 
 const loginSchema = z.object({
   email: z.email({ error: "Invalid email" }),
-  password: z.string({ error: "password is required" }),
+  password: z.string().min(1, { error: "password is required" }),
 });
 
 const router = Router();
