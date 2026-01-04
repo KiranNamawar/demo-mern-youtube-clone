@@ -1,27 +1,23 @@
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { Outlet } from "react-router";
 import { Toaster } from "react-hot-toast";
 import { AlertCircle, CheckCircle, Loader2 } from "lucide-react";
 import Header from "./components/Header";
 import SideBar from "./components/SideBar";
-import clsx from "clsx";
 
 function App() {
   const [sideBarHidden, setSideBarHidden] = useState(false);
+
   const toggleSideBar = () => setSideBarHidden(!sideBarHidden);
+
   return (
     <div className="flex flex-col min-h-screen">
       <Header toggleSideBar={toggleSideBar} />
-      <div className="flex">
-        <aside
-          className={clsx(
-            "transition-all ease-in-out duration-300 scroll-auto",
-            sideBarHidden ? "w-0 opacity-0" : "w-50 opacity-100"
-          )}
-        >
+      <div className="flex relative">
+        <aside className={`lg:transition-all lg:ease-in-out lg:duration-300 ${sideBarHidden ? 'lg:w-0' : 'lg:w-60'}`}>
           <SideBar hidden={sideBarHidden} />
         </aside>
-        <main className="flex-1 p-2">
+        <main className="flex-1 p-2 md:p-4 min-w-0 transition-all duration-300">
           <Suspense fallback={<Loading />}>
             <Outlet />
           </Suspense>

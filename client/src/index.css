@@ -31,7 +31,7 @@ body {
 }
 
 @utility btn {
-  @apply bg-fg/10 py-1.5 px-2.5 rounded-xl font-semibold cursor-pointer hover:bg-fg/25;
+  @apply bg-fg/10 py-1.5 px-2.5 rounded-xl font-semibold cursor-pointer hover:bg-fg/25 transition-colors duration-200;
 }
 
 @utility btn-active {
@@ -39,15 +39,29 @@ body {
 }
 
 @utility btn-secondary {
-  @apply hover:bg-fg/25 p-2 rounded-full cursor-pointer;
+  @apply hover:bg-fg/25 p-2 rounded-full cursor-pointer transition-colors duration-200 min-w-[44px] min-h-[44px] flex items-center justify-center;
 }
 
 @utility btn-disabled {
   @apply hover:bg-transparent bg-transparent text-fg/25 cursor-default;
 }
 
+@utility scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 dialog {
-  @apply rounded-2xl border-none p-0 shadow-2xl bg-bg text-fg m-auto;
+  @apply rounded-2xl border-none p-0 shadow-2xl bg-bg text-fg;
+  @apply w-[95vw] max-w-2xl mx-auto my-auto;
+  
+  @media (max-width: 768px) {
+    @apply w-[95vw] max-h-[90vh] overflow-y-auto;
+  }
 }
 
 dialog::backdrop {
