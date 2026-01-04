@@ -43,8 +43,26 @@ async function seed() {
             createdAt: oneYearAgo,
         });
 
+        const testUser2 = await User.create({
+            username: "testuser2",
+            email: "user2@test.com",
+            avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=testuser2",
+            password: await hashPassword("Testing123"),
+            createdAt: oneYearAgo,
+        });
+
+        const testUser3 = await User.create({
+            username: "testuser3",
+            email: "user3@test.com",
+            avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=testuser3",
+            password: await hashPassword("Testing123"),
+            createdAt: oneYearAgo,
+        });
+
         const usernameToId = new Map();
         usernameToId.set("testuser", testUser._id);
+        usernameToId.set("testuser2", testUser2._id);
+        usernameToId.set("testuser3", testUser3._id);
 
         // Create users from seed data
         for (const userData of data.users) {
@@ -76,8 +94,23 @@ async function seed() {
                 .map(username => usernameToId.get(username))
                 .filter(id => id !== undefined);
 
+            // Distribute channel ownership among test users
+            const channelIndex = data.channels.indexOf(channelData);
+            let channelUserId;
+            if (channelIndex < 2) {
+                channelUserId = testUser._id; // First 2 channels to testuser
+            } else if (channelIndex < 4) {
+                channelUserId = testUser2._id; // Next 2 channels to testuser2
+            } else if (channelIndex < 6) {
+                channelUserId = testUser3._id; // Next 2 channels to testuser3
+            } else {
+                // Remaining channels to random seed users
+                const randomUsername = channelData.subscribers[0];
+                channelUserId = usernameToId.get(randomUsername) || testUser._id;
+            }
+
             const newChannel = await Channel.create({
-                userId: testUser._id, // Assign all channels to test user
+                userId: channelUserId,
                 handle: channelData.handle,
                 name: channelData.name,
                 description: channelData.description,
@@ -175,8 +208,9 @@ async function seed() {
         console.log(`   💬 Comments: ${createdComments}`);
         console.log("=".repeat(60));
         console.log("\n🔑 Test User Credentials:");
-        console.log("   Email: user@test.com");
-        console.log("   Password: Testing123");
+        console.log("   User 1 - Email: user@test.com | Password: Testing123");
+        console.log("   User 2 - Email: user2@test.com | Password: Testing123");
+        console.log("   User 3 - Email: user3@test.com | Password: Testing123");
         console.log("=".repeat(60));
 
         process.exit(0);
