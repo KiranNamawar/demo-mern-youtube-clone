@@ -28,10 +28,12 @@ A full-stack YouTube clone application that replicates core YouTube features inc
 ## Links
 
 - [Github](https://github.com/KiranNamawar/demo-mern-youtube-clone)
+- [Live Demo](https://demo-mern-youtube-clone.vercel.app/)
 
 ## Setup
 
 - Clone the repository
+
 ```bash
 git clone https://github.com/KiranNamawar/demo-mern-youtube-clone.git
 cd demo-mern-youtube-clone
@@ -44,26 +46,31 @@ cd server
 ```
 
 - Install dependencies
+
 ```bash
 npm install
 ```
 
 - Copy .env.example to .env and fill in the values
+
 ```bash
 cp .env.example .env
 ```
 
 - Start Database with Docker (optional if you have mongodb installed)
+
 ```bash
 npm run db:start
 ```
 
 - Seed Database
+
 ```bash
 npm run db:seed
 ```
 
 - Start Server
+
 ```bash
 npm run dev
 ```
@@ -75,13 +82,16 @@ cd client
 ```
 
 - Install dependencies
+
 ```bash
 npm install
 ```
 
 - Start Client
+
 ```bash
 npm run dev
 ```
 
 - Open [http://localhost:5173](http://localhost:5173) to view it in the browser.
+  > > > > > > > main

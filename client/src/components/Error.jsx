@@ -19,7 +19,6 @@ function Error() {
       <Link to="/">
         <img src={logo} alt="YouTube Logo" width={300} />
       </Link>
-      <SearchBar />
     </main>
   );
 }
