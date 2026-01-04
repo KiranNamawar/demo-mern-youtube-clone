@@ -48,8 +48,8 @@ function Login() {
   }
 
   return (
-    <div className="flex flex-col h-full gap-4 justify-center items-center">
-      <h2 className="text-4xl font-bold">Login</h2>
+    <div className="flex flex-col h-full gap-3 md:gap-4 justify-center items-center p-4 md:p-6">
+      <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold">Login</h2>
       <Form
         fields={fields}
         schema={loginSchema}
@@ -63,7 +63,7 @@ function Login() {
         Don't have an account?{" "}
         <Link
           to="/register"
-          className="text-blue-400 underline font-semibold text-lg"
+          className="text-blue-400 underline font-semibold text-base md:text-lg"
         >
           Register
         </Link>

@@ -1,17 +1,16 @@
-import { useState } from "react";
+import { Trash2 } from "lucide-react";
+import toast from "react-hot-toast";
+import { useDispatch, useSelector } from "react-redux";
 import { useLoaderData, useNavigate, useRevalidator } from "react-router";
 import Avatar from "../components/Avatar";
+import Button from "../components/Button";
+import ChannelDialog from "../components/ChannelDialog";
 import SubscribeButton from "../components/SubscribeButton";
 import VideoCard from "../components/VideoCard";
-import api from "../lib/api";
-import { formatNumber } from "../utils/format";
-import { useDispatch, useSelector } from "react-redux";
-import toast from "react-hot-toast";
-import ChannelDialog from "../components/ChannelDialog";
-import Button from "../components/Button";
-import { Trash2 } from "lucide-react";
-import { removeChannel } from "../state/userSlice";
 import VideoDialog from "../components/VideoDialog";
+import api from "../lib/api";
+import { removeChannel } from "../state/userSlice";
+import { formatNumber } from "../utils/format";
 
 export async function channelLoader({ params }) {
   try {
@@ -69,8 +68,9 @@ function Channel() {
   const backupBannerUrl = `https://picsum.photos/seed/${name}/800/200`;
 
   return (
-    <div className="flex flex-col gap-4 min-h-screen p-2">
-      <div className="w-full h-50 rounded-2xl overflow-hidden">
+    <div className="flex flex-col gap-3 md:gap-4 min-h-screen p-1 md:p-2">
+      {/* Channel Banner */}
+      <div className="w-full h-32 md:h-40 lg:h-50 rounded-xl md:rounded-2xl overflow-hidden">
         <img
           src={banner ?? backupBannerUrl}
           alt={name}
@@ -78,11 +78,20 @@ function Channel() {
           onError={(evt) => (evt.currentTarget.src = backupBannerUrl)}
         />
       </div>
-      <div className="flex gap-4">
-        <Avatar src={avatar} alt={name} width={150} height={150} />
+
+      {/* Channel Info Section */}
+      <div className="flex flex-col md:flex-row gap-3 md:gap-4 px-2">
+        {/* Avatar */}
+        <Avatar
+          src={avatar}
+          alt={name}
+          width={80}
+          height={80}
+          className="md:w-30 md:h-30 lg:w-37.5 lg:h-37.5"
+        />
         <div className="w-full flex flex-col gap-2">
-          <h1 className="text-3xl">{name}</h1>
-          <div className="flex gap-4">
+          <h1 className="text-2xl md:text-3xl font-bold">{name}</h1>
+          <div className="flex flex-wrap gap-2 md:gap-4 text-sm md:text-base">
             <span className="font-bold">
               {handle?.startsWith("@") ? handle : "@" + handle}
             </span>
@@ -93,11 +102,11 @@ function Channel() {
               {formatNumber(videos.length)} videos
             </span>
           </div>
-          <p className="line-clamp-2 overflow-hidden w-full text-fg/80 max-w-4xl">
+          <p className="line-clamp-2 overflow-hidden w-full text-fg/80 max-w-4xl text-sm md:text-base">
             {description}
           </p>
           {isOwner ? (
-            <div className="flex gap-4 items-center">
+            <div className="flex flex-wrap gap-3 md:gap-4 items-center">
               <ChannelDialog edit={true} channel={channel} />
               <Button
                 Icon={Trash2}
@@ -110,10 +119,13 @@ function Channel() {
           )}
         </div>
       </div>
-      <div className="w-full border border-fg/20 mt-4 mx-2 m-auto"></div>
-      <div className="flex flex-1 h-full">
+
+      <div className="w-full border border-fg/20 mt-2 md:mt-4 mx-2 m-auto"></div>
+
+      {/* Videos Grid */}
+      <div className="flex flex-1 h-full px-1">
         {videos.length > 0 ? (
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 w-full">
             {videos.map((video) => (
               <VideoCard
                 video={{ ...video, channelId: { _id, name, avatar } }}
@@ -127,8 +139,8 @@ function Channel() {
         ) : (
           <div className="flex-1 flex items-center w-full h-full justify-center">
             {isOwner ? (
-              <div className="flex flex-col items-center gap-4">
-                <p>You haven't uploaded any video yet.</p>
+              <div className="flex flex-col items-center gap-4 p-4">
+                <p className="text-center">You haven't uploaded any video yet.</p>
                 <VideoDialog channelId={_id} />
               </div>
             ) : (

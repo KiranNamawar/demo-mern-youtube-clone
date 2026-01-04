@@ -75,7 +75,7 @@ function Form({
     <form
       onSubmit={handleSubmit}
       method={dialog ? "dialog" : "post"}
-      className="flex flex-col gap-4 w-120"
+      className="flex flex-col gap-3 md:gap-4 w-full max-w-md md:max-w-lg"
     >
       {fields.map(({ name, type, onInput, placeholder, required }) => (
         <FormField

@@ -100,8 +100,8 @@ function Register() {
   }
 
   return (
-    <div className="flex flex-col gap-4 h-full justify-center items-center">
-      <h2 className="text-4xl font-bold">Register</h2>
+    <div className="flex flex-col gap-3 md:gap-4 h-full justify-center items-center p-4 md:p-6">
+      <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold">Register</h2>
       <Form
         fields={fields}
         schema={registerSchema}
@@ -113,7 +113,7 @@ function Register() {
       />
       {error && <div className="text-red-400">{error}</div>}
       <div>
-        Already have an account? <Link to="/login" className="text-blue-400 underline font-semibold text-lg">Login</Link>
+        Already have an account? <Link to="/login" className="text-blue-400 underline font-semibold text-base md:text-lg">Login</Link>
       </div>
     </div>
   );

@@ -116,16 +116,16 @@ function VideoDialog({ edit = false, video = {}, channelId }) {
       />
       <dialog ref={dialogRef} onCancel={closeDialog}>
         {isOpen && (
-          <div className="p-10 flex flex-col items-center gap-4">
+          <div className="p-4 md:p-6 lg:p-10 flex flex-col items-center gap-3 md:gap-4">
             <div className="flex justify-between w-full items-center">
-              <h2 className="text-3xl font-semibold">{title}</h2>
+              <h2 className="text-xl md:text-2xl lg:text-3xl font-semibold">{title}</h2>
               <button className="btn-secondary" onClick={closeDialog}>
                 <X />
               </button>
             </div>
             <div>
               {edit ? (
-                <p>Channel: {activeChannel.name}</p>
+                <p className="text-sm md:text-base">Channel: {activeChannel?.name || 'Unknown'}</p>
               ) : (
                 <div>
                   <label htmlFor="channel-select" className="font-semibold">
