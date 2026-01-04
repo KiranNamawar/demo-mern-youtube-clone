@@ -4,7 +4,7 @@ import ErrorCodes from "./error-codes";
 import store from "../state/store";
 import { logoutSuccess } from "../state/userSlice";
 
-const API_URL = "http://localhost:3000";
+const API_URL = "https://demo-mern-youtube-clone.onrender.com";
 
 const api = axios.create({
   baseURL: API_URL,
@@ -22,7 +22,7 @@ api.interceptors.request.use(
     }
     return config;
   },
-  (err) => Promise.reject(err)
+  (err) => Promise.reject(err),
 );
 
 // Response interceptor - logout if token is invalid/expired
@@ -34,7 +34,7 @@ api.interceptors.response.use(
       store.dispatch(logoutSuccess());
     }
     return Promise.reject(err);
-  }
+  },
 );
 
 export function handleApi({
