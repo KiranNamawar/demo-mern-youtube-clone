@@ -41,25 +41,26 @@ function Watch() {
   const embedUrl = videoUrl.replace("watch?v=", "embed/");
 
   return (
-    <div className="">
-      <div className="grid grid-cols-4 gap-2 p-2">
-        <div className="col-span-3 flex flex-col gap-4">
+    <div className="w-full">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-3 md:gap-4 p-1 md:p-2">
+        {/* Main Video Section */}
+        <div className="lg:col-span-3 flex flex-col gap-3 md:gap-4">
           <iframe
             src={embedUrl}
             title={title}
             loading="lazy"
             allowFullScreen
-            className="w-full aspect-video rounded-2xl"
+            className="w-full aspect-video rounded-xl md:rounded-2xl"
           />
-          <p className="text-2xl font-semibold">{title}</p>
+          <p className="text-lg md:text-2xl font-semibold px-1">{title}</p>
           <VideoActions channel={channelId} likes={likes} videoId={videoId} />
-          <div className="overflow-hidden bg-surface p-4 rounded-2xl flex flex-col">
-            <p className="flex gap-4 font-bold">
+          <div className="overflow-hidden bg-surface p-3 md:p-4 rounded-xl md:rounded-2xl flex flex-col">
+            <p className="flex flex-wrap gap-2 md:gap-4 font-bold text-sm md:text-base">
               <span>{formatNumber(views)} views</span>
               <span>{timeAgo(createdAt)}</span>
             </p>
             <pre
-              className={clsx("mt-2 transition-all duration-300", {
+              className={clsx("mt-2 transition-all duration-300 text-sm md:text-base whitespace-pre-wrap break-words", {
                 "line-clamp-5": !viewMoreDescription,
               })}
             >
@@ -67,14 +68,16 @@ function Watch() {
             </pre>
             <button
               onClick={() => setViewMoreDescription(!viewMoreDescription)}
-              className="font-semibold text-lg self-end"
+              className="font-semibold text-base md:text-lg self-end mt-2"
             >
               view {viewMoreDescription ? "less" : "more"}
             </button>
           </div>
           <VideoComments comments={comments} videoId={videoId} />
         </div>
-        <div>
+
+        {/* Related Videos Section */}
+        <div className="lg:col-span-1 flex flex-col gap-2">
           {relatedVideos.map((video) => (
             <VideoCard video={video} key={video._id} />
           ))}

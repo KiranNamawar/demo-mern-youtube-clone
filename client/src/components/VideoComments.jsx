@@ -118,7 +118,7 @@ function VideoComments({ comments: originalComments, videoId }) {
                         {(!author.username.startsWith("@") ? "@" : "") +
                           author.username}
                       </span>
-                      <span>
+                      <span className="line-clamp-1">
                         {new Date(updatedAt) > new Date(createdAt)
                           ? "edited " + timeAgo(updatedAt)
                           : timeAgo(createdAt)}

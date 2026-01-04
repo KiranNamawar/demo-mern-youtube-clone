@@ -13,5 +13,5 @@ export function formatNumber(number) {
 export function timeAgo(date) {
   return formatDistanceToNow(new Date(date), {
     addSuffix: true,
-  }).replace("about ", "");
+  }).replace("about ", "").replace("less than", "");
 }

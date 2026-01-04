@@ -69,18 +69,19 @@ function VideoActions({ channel, likes, videoId }) {
   }
 
   return (
-    <div className="flex justify-between gap-4">
-      <div className="flex gap-10 items-center">
-        <div className="flex gap-3 items-center">
+    <div className="flex flex-col lg:flex-row justify-between gap-3 lg:gap-4">
+      {/* Channel Info Section */}
+      <div className="flex gap-2 md:gap-3 items-center justify-between lg:justify-start">
+        <div className="flex gap-2 md:gap-3 items-center min-w-0 flex-1">
           <Avatar
             src={channel.avatar}
             alt={channel.name}
             width={40}
             height={40}
           />
-          <div>
+          <div className="min-w-0 flex-1">
             <Link to={`/channel/${channel._id}`}>
-              <p className="text-l font-medium">{channel.name}</p>
+              <p className="text-sm md:text-base font-medium truncate">{channel.name}</p>
             </Link>
             <p className="text-fg/50 text-xs">
               {channel.subscribersCount} subscribers
@@ -89,10 +90,13 @@ function VideoActions({ channel, likes, videoId }) {
         </div>
         <SubscribeButton channel={channel} />
       </div>
-      <div className="flex gap-4 items-center">
+
+      {/* Action Buttons Section */}
+      <div className="flex gap-2 md:gap-3 lg:gap-4 items-center flex-wrap lg:flex-nowrap">
+        {/* Like/Dislike Group */}
         <span className="flex rounded-3xl bg-fg/10 overflow-hidden">
           <button
-            className={clsx("flex gap-2 hover:bg-fg/20 px-4 py-2")}
+            className={clsx("flex gap-2 hover:bg-fg/20 px-3 items-center md:px-4 py-2 min-w-[44px] min-h-[44px]")}
             onClick={() => {
               isAuthenticated
                 ? handleLike()
@@ -100,17 +104,18 @@ function VideoActions({ channel, likes, videoId }) {
             }}
           >
             <ThumbsUp fill={likeState.isLiked ? likeButtonFillColor : "none"} />{" "}
-            {formatNumber(likeState.likeCount)}
+            <span className="hidden sm:inline">{formatNumber(likeState.likeCount)}</span>
+            <span className="sm:hidden">{likeState.likeCount}</span>
           </button>
           <div className="border m-0 my-2"></div>
           <button
-            className={clsx("flex gap-2 hover:bg-fg/20 px-4 py-2")}
+            className={clsx("flex gap-2 hover:bg-fg/20 px-3 items-center md:px-4 py-2 min-w-[44px] min-h-[44px]")}
             onClick={() => {
               isAuthenticated
                 ? handleDislike()
                 : toast.error("Please Login to dislike video", {
-                    icon: <Info />,
-                  });
+                  icon: <Info />,
+                });
             }}
           >
             <ThumbsDown
@@ -118,15 +123,21 @@ function VideoActions({ channel, likes, videoId }) {
             />
           </button>
         </span>
-
+        
         {/* Static Buttons */}
-        <Button Icon={Send} title="Share" className="rounded-3xl py-2" />
+        <Button
+          Icon={Send}
+          title="Share"
+          className="flex rounded-3xl py-2"
+        />
+
         <Button
           Icon={ArrowDownToLine}
           title="Download"
-          className="rounded-3xl py-2"
+          className="hidden md:flex rounded-3xl py-2"
         />
-        <button className="rounded-full btn-secondary bg-fg/10">
+
+        <button className="rounded-full btn-secondary bg-fg/10 min-w-[44px] min-h-[44px]">
           <Ellipsis />
         </button>
       </div>
