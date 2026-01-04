@@ -1,6 +1,3 @@
-// load .env file (requires Node v20+)
-process.loadEnvFile();
-
 export function getEnvVar(name, fallback) {
   const value = process.env[name] ?? fallback;
 
