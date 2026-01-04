@@ -124,7 +124,7 @@ function ChannelDialog({ edit = false, channel = {} }) {
     console.error(error);
   }
 
-  const title = edit ? "Edit Channel" : "Create Channel";
+  const title = edit ? "Edit" : "Create Channel";
   const Icon = edit ? Pen : TvMinimal;
   const method = edit ? "put" : "post";
   const submitPath = edit ? `/channel/${channel._id}` : "/channel";

@@ -33,7 +33,9 @@ function User() {
     <div className="flex items-center gap-4">
       {isAuthenticated ? (
         <>
-          <Button popoverTarget="create-box" Icon={Plus} title="Create" />
+          <button popoverTarget="create-box" title="Create" className="btn flex gap-2">
+            <Plus /> <span className="hidden md:inline">Create</span>
+          </button>
           <div
             id="create-box"
             popover="auto"

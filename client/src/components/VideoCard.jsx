@@ -11,7 +11,7 @@ function VideoCard({ video, isOwner = false, onDelete, channelId }) {
   const backThumbnailUrl = `https://picsum.photos/seed/${video.title}/300/200`;
 
   return (
-    <div className="overflow-hidden rounded-3xl h-fit cursor-pointer transition-all duration-300 ease-in-out hover:bg-surface p-2 flex flex-col gap-2">
+    <div className="overflow-hidden rounded-3xl h-fit cursor-pointer transition-all duration-300 ease-in-out hover:bg-surface p-2 flex flex-col">
       <div
         className="grid gap-2"
         onClick={() => navigate(`/watch/${video._id}`)}
@@ -41,11 +41,11 @@ function VideoCard({ video, isOwner = false, onDelete, channelId }) {
         </div>
       </div>
       {isOwner && (
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between px-2">
           <VideoDialog edit={true} video={video} channelId={channelId} />
           <Button
             Icon={Trash2}
-            title="Delete Video"
+            title="Delete"
             onClick={(evt) => {
               evt.stopPropagation();
               onDelete();

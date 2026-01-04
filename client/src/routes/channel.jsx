@@ -106,11 +106,11 @@ function Channel() {
             {description}
           </p>
           {isOwner ? (
-            <div className="flex flex-wrap gap-3 md:gap-4 items-center">
+            <div className="flex flex-wrap gap-2 md:gap-4 items-center">
               <ChannelDialog edit={true} channel={channel} />
               <Button
                 Icon={Trash2}
-                title="Delete Channel"
+                title="Delete"
                 onClick={handleChannelDelete}
               />
             </div>

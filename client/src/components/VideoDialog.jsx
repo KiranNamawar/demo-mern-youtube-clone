@@ -96,7 +96,7 @@ function VideoDialog({ edit = false, video = {}, channelId }) {
     setError(error);
   }
 
-  const title = edit ? "Edit Video" : "Upload Video";
+  const title = edit ? "Edit" : "Upload Video";
   const Icon = edit ? Pen : Video;
   const submitPath = edit
     ? `/channel/${activeChannelId}/video/${video._id}`
