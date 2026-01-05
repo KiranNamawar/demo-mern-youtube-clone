@@ -29,6 +29,7 @@ A full-stack YouTube clone application that replicates core YouTube features inc
 
 - [Github](https://github.com/KiranNamawar/demo-mern-youtube-clone)
 - [Live Demo](https://demo-mern-youtube-clone.vercel.app/)
+- [Video Tour](https://youtu.be/LwRJr5Qgeyo)
 
 ## Setup
 
